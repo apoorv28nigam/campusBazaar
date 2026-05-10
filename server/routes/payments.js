@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+let stripe;
+if (process.env.STRIPE_SECRET_KEY) {
+  stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+} else {
+  console.warn('⚠️ Stripe Secret Key missing. Payments will not function.');
+}
+
 const Transaction = require('../models/Transaction');
 const Item = require('../models/Item');
 const BorrowItem = require('../models/BorrowItem');
