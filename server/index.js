@@ -54,6 +54,9 @@ app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/requests', require('./routes/requests'));
 
+// Root route
+app.get('/', (req, res) => res.send('🚀 CampusCart Backend is Running'));
+
 // Health check
 app.get('/api/health', (req, res) => res.json({ status: 'CampusCart API running ✅' }));
 
