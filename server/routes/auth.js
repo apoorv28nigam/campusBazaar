@@ -153,9 +153,9 @@ router.post('/otp/verify', async (req, res) => {
     const token = jwt.sign({ id: mongoUser._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
 
     // Return the session back to the client
-    res.json({ 
-      success: true, 
-      message: 'Verified successfully', 
+    res.json({
+      success: true,
+      message: 'Verified successfully',
       session: sessionData.session,
       user: user,
       token,

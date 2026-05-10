@@ -27,7 +27,7 @@ export default function Login() {
   const handleSendOTP = async (e) => {
     if (e) e.preventDefault();
     if (!email) return toast.error('Please enter your email');
-    
+
     setLoading(true);
     try {
       await authAPI.sendOtp(email);
@@ -35,7 +35,7 @@ export default function Login() {
       setStep(2);
       setTimer(30); // 30s cooldown for resend
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to send OTP');
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -45,7 +45,7 @@ export default function Login() {
     setLoading(true);
     try {
       const res = await authAPI.verifyOtp(email, otp);
-      
+
       if (res.data.session) {
         if (res.data.token) {
           localStorage.setItem('cc_token', res.data.token);
@@ -56,9 +56,9 @@ export default function Login() {
           access_token: res.data.session.access_token,
           refresh_token: res.data.session.refresh_token,
         });
-        
+
         if (error) throw error;
-        
+
         toast.success('Verified successfully!');
         navigate('/buy');
       } else {
@@ -76,13 +76,13 @@ export default function Login() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px 40px' }}>
       <div style={{ width: '100%', maxWidth: 440 }}>
         {/* Logo */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: dur.md, ease: ease.out }}
           style={{ textAlign: 'center', marginBottom: 40 }}
         >
-          <motion.div 
+          <motion.div
             whileHover={{ rotate: 10, scale: 1.1 }}
             style={{ width: 64, height: 64, borderRadius: 18, background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', boxShadow: '0 8px 32px rgba(107, 79, 58, 0.2)', cursor: 'pointer' }}
           >
@@ -94,11 +94,11 @@ export default function Login() {
           <p style={{ color: 'var(--text-muted)', marginTop: 8, fontSize: 16 }}>Secure Student Marketplace</p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="card" 
+          className="card"
           style={{ padding: '40px 32px' }}
         >
           <AnimatePresence mode="wait">
@@ -120,24 +120,24 @@ export default function Login() {
                     <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 8, letterSpacing: '0.05em' }}>EMAIL ADDRESS</label>
                     <div style={{ position: 'relative' }}>
                       <Mail size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                      <input 
-                        className="input" 
-                        type="email" 
-                        value={email} 
+                      <input
+                        className="input"
+                        type="email"
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@college.edu.in" 
-                        style={{ paddingLeft: 46, background: '#f9fafb', height: 56, fontSize: 15 }} 
-                        required 
+                        placeholder="you@college.edu.in"
+                        style={{ paddingLeft: 46, background: '#f9fafb', height: 56, fontSize: 15 }}
+                        required
                         autoFocus
                       />
                     </div>
                   </div>
 
-                  <motion.button 
+                  <motion.button
                     {...btnTap}
-                    type="submit" 
-                    className="btn-primary" 
-                    disabled={loading} 
+                    type="submit"
+                    className="btn-primary"
+                    disabled={loading}
                     style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: 16, height: 56, marginTop: 8 }}
                   >
                     {loading ? (
@@ -165,8 +165,8 @@ export default function Login() {
                     We sent a 6-digit code to <br />
                     <span style={{ fontWeight: 600, color: 'var(--text)' }}>{email}</span>
                   </p>
-                  <button 
-                    onClick={() => setStep(1)} 
+                  <button
+                    onClick={() => setStep(1)}
                     style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: 13, fontWeight: 600, marginTop: 8, cursor: 'pointer' }}
                   >
                     Change Email
@@ -178,19 +178,19 @@ export default function Login() {
                 </div>
 
                 <div style={{ textAlign: 'center' }}>
-                  <button 
-                    onClick={handleSendOTP} 
+                  <button
+                    onClick={handleSendOTP}
                     disabled={timer > 0 || loading}
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: 8, 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 8,
                       margin: '0 auto',
-                      background: 'none', 
-                      border: 'none', 
-                      color: timer > 0 ? 'var(--text-muted)' : 'var(--primary)', 
-                      fontSize: 14, 
-                      fontWeight: 700, 
+                      background: 'none',
+                      border: 'none',
+                      color: timer > 0 ? 'var(--text-muted)' : 'var(--primary)',
+                      fontSize: 14,
+                      fontWeight: 700,
                       cursor: timer > 0 ? 'default' : 'pointer',
                       opacity: timer > 0 ? 0.6 : 1,
                       transition: 'all 0.2s'
@@ -205,14 +205,14 @@ export default function Login() {
                 </div>
 
                 {loading && (
-                   <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     style={{ marginTop: 24, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-                   >
-                     <div className="spinner" style={{ width: 16, height: 16, border: '2px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                     Verifying...
-                   </motion.div>
+                  >
+                    <div className="spinner" style={{ width: 16, height: 16, border: '2px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                    Verifying...
+                  </motion.div>
                 )}
               </motion.div>
             )}
@@ -220,7 +220,7 @@ export default function Login() {
         </motion.div>
 
         {/* Footer info */}
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
