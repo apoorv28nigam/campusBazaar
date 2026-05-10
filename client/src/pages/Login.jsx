@@ -35,7 +35,7 @@ export default function Login() {
       setStep(2);
       setTimer(30); // 30s cooldown for resend
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message || 'Failed to send OTP');
     } finally {
       setLoading(false);
     }
