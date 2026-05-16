@@ -6,6 +6,22 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const { supabaseAdmin, supabaseClient } = require('../config/supabase');
 const { sendOTPEmail } = require('../config/email');
+const { protect } = require('../middleware/auth');
+
+/**
+ * @desc  Get current logged-in user (session restore)
+ * @route GET /api/auth/me
+ */
+router.get('/me', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ user });
+  } catch (err) {
+    console.error('❌ /me Error:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
 
 /**
  * @desc  Send 6-digit OTP to email
@@ -92,18 +108,16 @@ router.post('/otp/verify', async (req, res) => {
     // 4. Success -> Delete used OTP
     await supabaseAdmin.from('otp_codes').delete().eq('email', email);
 
-    // 5. Create/Login User natively without magic links
-    const tempPassword = crypto.randomUUID();
+    // 5. Find existing Supabase auth user by email
+    const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+    if (listError) throw listError;
+    const existingUser = users.find(u => u.email === email);
+
     let user;
-
-    // Check if user exists
-    const { data: usersData, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
-    if (usersError) throw usersError;
-
-    const existingUser = usersData.users.find(u => u.email === email);
+    const tempPassword = crypto.randomUUID();
 
     if (existingUser) {
-      // Update existing user's password to login
+      // Update existing user's password to enable signInWithPassword
       const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
         password: tempPassword,
         email_confirm: true

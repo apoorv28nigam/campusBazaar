@@ -7,24 +7,15 @@ const Review = require('../models/Review');
 const { protect } = require('../middleware/auth');
 const { upload } = require('../config/cloudinary');
 
-// @desc  Get user profile
-// @route GET /api/users/:id
-router.get('/:id', async (req, res) => {
+// ⚠️ IMPORTANT: Specific string routes MUST come before /:id catch-all
+
+// @desc  Get user's own listings
+// @route GET /api/users/my/listings
+router.get('/my/listings', protect, async (req, res) => {
   try {
-    const isMongoId = req.params.id.match(/^[0-9a-fA-F]{24}$/);
-    const query = isMongoId ? { _id: req.params.id } : { supabaseId: req.params.id };
-    
-    const user = await User.findOne(query).select('-password -verificationToken -email');
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    const listings = await Item.find({ seller: user._id, isActive: true }).sort({ createdAt: -1 }).limit(10);
-    const borrowListings = await BorrowItem.find({ owner: user._id, isActive: true }).sort({ createdAt: -1 }).limit(10);
-    const reviews = await Review.find({ reviewee: user._id })
-      .populate('reviewer', 'name avatar')
-      .sort({ createdAt: -1 })
-      .limit(10);
-
-    res.json({ user, listings, borrowListings, reviews });
+    const items = await Item.find({ seller: req.user._id, isActive: true }).sort({ createdAt: -1 });
+    const borrowItems = await BorrowItem.find({ owner: req.user._id, isActive: true }).sort({ createdAt: -1 });
+    res.json({ items, borrowItems });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -64,18 +55,6 @@ router.post('/avatar', protect, upload.single('avatar'), async (req, res) => {
   }
 });
 
-// @desc  Get user's own listings
-// @route GET /api/users/my/listings
-router.get('/my/listings', protect, async (req, res) => {
-  try {
-    const items = await Item.find({ seller: req.user._id, isActive: true }).sort({ createdAt: -1 });
-    const borrowItems = await BorrowItem.find({ owner: req.user._id, isActive: true }).sort({ createdAt: -1 });
-    res.json({ items, borrowItems });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // @desc  Save/unsave an item
 // @route POST /api/users/save/:itemId
 router.post('/save/:itemId', protect, async (req, res) => {
@@ -92,4 +71,28 @@ router.post('/save/:itemId', protect, async (req, res) => {
   }
 });
 
+// @desc  Get user profile by ID (MUST be last — catches all /:id)
+// @route GET /api/users/:id
+router.get('/:id', async (req, res) => {
+  try {
+    const isMongoId = req.params.id.match(/^[0-9a-fA-F]{24}$/);
+    const query = isMongoId ? { _id: req.params.id } : { supabaseId: req.params.id };
+
+    const user = await User.findOne(query).select('-password -verificationToken -email');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const listings = await Item.find({ seller: user._id, isActive: true }).sort({ createdAt: -1 }).limit(10);
+    const borrowListings = await BorrowItem.find({ owner: user._id, isActive: true }).sort({ createdAt: -1 }).limit(10);
+    const reviews = await Review.find({ reviewee: user._id })
+      .populate('reviewer', 'name avatar')
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    res.json({ user, listings, borrowListings, reviews });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
+
