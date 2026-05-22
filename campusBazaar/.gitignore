@@ -1,0 +1,105 @@
+# ============================================================
+#  CampusCart — Root .gitignore
+#  Covers: client (Vite/React) + server (Node/Express/Mongo)
+# ============================================================
+
+# ---------------------------
+# Environment / Secrets
+# ---------------------------
+.env
+.env.example
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+# Keep the example template so others know what vars are needed
+!.env.example
+
+# ---------------------------
+# Dependencies
+# ---------------------------
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# ---------------------------
+# Build Output
+# ---------------------------
+dist/
+dist-ssr/
+build/
+client/dist/
+client/build/
+
+# ---------------------------
+# Logs
+# ---------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ---------------------------
+# Runtime / OS Files
+# ---------------------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ---------------------------
+# Editor / IDE
+# ---------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+*.bak
+
+# ---------------------------
+# Vite / Bundler Cache
+# ---------------------------
+.vite/
+*.local
+vite.config.js.timestamp-*
+
+# ---------------------------
+# Temporary / Scratch Files
+# (one-off scripts in server root)
+# ---------------------------
+server/check_connection.js
+server/final_restore.js
+server/fix_is_active.js
+server/scratch_test.js
+server/test_brevo.js
+
+# ---------------------------
+# Package Manager Lock Files
+# (optional — remove these lines
+#  if you want to commit lockfiles)
+# ---------------------------
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ---------------------------
+# Coverage / Testing
+# ---------------------------
+coverage/
+.nyc_output/
+
+# ---------------------------
+# Misc
+# ---------------------------
+*.tgz
+*.zip
+*.tar.gz
