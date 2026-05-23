@@ -15,7 +15,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   async (err) => {
-    if (err.response?.status === 401) {
+    const isAuthRoute = err.config?.url?.includes('/auth/');
+    // Only force-redirect on 401 from non-auth routes (i.e., an expired session)
+    // Don't redirect if the user is actively trying to log in (wrong password, etc.)
+    if (err.response?.status === 401 && !isAuthRoute) {
       localStorage.removeItem('cc_token');
       localStorage.removeItem('cc_user');
       await supabase.auth.signOut();
