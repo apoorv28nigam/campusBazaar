@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   ShoppingBag, PlusCircle, RefreshCw, MessageCircle,
   Bell, User, Search, Menu, LogOut, ShoppingCart,
-  ChevronDown, Megaphone,
+  ChevronDown, Megaphone, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -18,6 +18,7 @@ export default function Navbar() {
   const [search, setSearch]           = useState('');
   const [menuOpen, setMenuOpen]       = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen]   = useState(false);
   const [unread, setUnread]           = useState(0);
   const [scrolled, setScrolled]       = useState(false);
   const profileRef = useRef(null);
@@ -47,7 +48,7 @@ export default function Navbar() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (search.trim()) { navigate(`/buy?search=${encodeURIComponent(search.trim())}`); setSearch(''); }
+    if (search.trim()) { navigate(`/buy?search=${encodeURIComponent(search.trim())}`); setSearch(''); setDrawerOpen(false); }
   };
 
   const handleLogout = () => { logout(); toast.success('Logged out successfully'); navigate('/'); };
@@ -90,7 +91,7 @@ export default function Navbar() {
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
-          height: scrolled ? 64 : 80, 
+          height: scrolled ? 'var(--header-height, 64px)' : 'var(--header-height, 80px)', 
           paddingLeft: 'var(--hero-px-left, 80px)',
           paddingRight: 'var(--hero-px-right, 40px)',
           maxWidth: 1500,
@@ -156,18 +157,18 @@ export default function Navbar() {
           </motion.div>
 
           {/* Right section */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
             {isAuth ? (
               <>
-                {/* Messages */}
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.92 }}>
+                {/* Messages (Desktop Only) */}
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.92 }} className="desktop-nav">
                   <Link to="/messages" style={{ width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', color: 'var(--primary)', border: '1px solid var(--border)', transition: 'all 0.2s', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                     <MessageCircle size={22} />
                   </Link>
                 </motion.div>
 
                 {/* Notifications */}
-                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.92 }} style={{ marginRight: 4 }}>
+                <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.92 }}>
                   <Link to="/notifications" style={{ position: 'relative', width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', color: 'var(--primary)', border: '1px solid var(--border)', transition: 'all 0.2s', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                     <motion.span animate={unread > 0 ? { rotate: [0, -15, 15, -10, 10, 0] } : {}} transition={{ duration: 0.5, repeat: unread > 0 ? Infinity : 0, repeatDelay: 3 }}>
                       <Bell size={22} />
@@ -184,8 +185,9 @@ export default function Navbar() {
                     )}
                   </Link>
                 </motion.div>
-                {/* Profile dropdown */}
-                <div ref={profileRef} style={{ position: 'relative' }}>
+                
+                {/* Profile dropdown (Desktop) */}
+                <div ref={profileRef} style={{ position: 'relative' }} className="desktop-nav">
                    <motion.button
                     onClick={() => setProfileOpen(p => !p)}
                     whileHover={{ scale: 1.02 }}
@@ -233,18 +235,95 @@ export default function Navbar() {
                 </div>
               </>
             ) : (
-              <>
+              <div className="desktop-nav" style={{ display: 'flex', gap: 12 }}>
                 <motion.div {...btnTap}>
                   <Link to="/login" className="btn-outline" style={{ padding: '8px 20px', fontSize: 14, border: 'none', background: 'transparent' }}>Log In</Link>
                 </motion.div>
                 <motion.div {...btnTap}>
                   <Link to="/register" className="btn-primary" style={{ padding: '10px 22px', fontSize: 14 }}>Sign Up</Link>
                 </motion.div>
-              </>
+              </div>
             )}
+            
+            {/* Hamburger Menu (Mobile Only) */}
+            <button className="mobile-only-flex" onClick={() => setDrawerOpen(true)} style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', padding: '8px', alignItems: 'center' }}>
+              <Menu size={28} />
+            </button>
           </div>
         </div>
       </motion.nav>
+
+      {/* ── Mobile Drawer ── */}
+      <AnimatePresence>
+        {drawerOpen && (
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            style={{
+              position: 'fixed', top: 0, right: 0, bottom: 0, width: '80%', maxWidth: 320,
+              background: 'white', zIndex: 2000, boxShadow: '-10px 0 30px rgba(0,0,0,0.1)',
+              display: 'flex', flexDirection: 'column', padding: '24px 20px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--text)' }}>
+                Campus<span style={{ color: 'var(--primary)' }}>Bazaar</span>
+              </span>
+              <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                 <X size={24} color="var(--text)" />
+              </button>
+            </div>
+            
+            {/* Search in Drawer */}
+            <form onSubmit={handleSearch} style={{ marginBottom: 24 }}>
+              <div style={{ position: 'relative' }}>
+                <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="Search campus..."
+                  style={{ width: '100%', padding: '12px 14px 12px 40px', background: '#f9fafb', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 16, outline: 'none', fontFamily: 'Inter, sans-serif' }}
+                />
+              </div>
+            </form>
+
+            {/* Drawer links */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, overflowY: 'auto', flex: 1 }}>
+              {navLinks.map(({ to, label, icon: Icon }) => (
+                <Link key={to} to={to} onClick={() => setDrawerOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, color: 'var(--text)', textDecoration: 'none', fontWeight: 600, transition: 'background 0.2s' }}>
+                  <Icon size={20} color="var(--primary)" /> {label}
+                </Link>
+              ))}
+              
+              <div style={{ height: 1, background: 'var(--border)', margin: '16px 0' }} />
+              
+              {isAuth ? (
+                <>
+                  <Link to="/profile" onClick={() => setDrawerOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', color: 'var(--text)', textDecoration: 'none', fontWeight: 600, borderRadius: 12 }}>
+                    <User size={20} color="var(--primary)" /> My Profile
+                  </Link>
+                  <button onClick={() => { setDrawerOpen(false); handleLogout(); }} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', color: 'var(--danger)', background: 'none', border: 'none', fontWeight: 600, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit', borderRadius: 12 }}>
+                    <LogOut size={20} /> Logout
+                  </button>
+                </>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
+                  <Link to="/login" onClick={() => setDrawerOpen(false)} className="btn-outline" style={{ width: '100%', justifyContent: 'center' }}>Log In</Link>
+                  <Link to="/register" onClick={() => setDrawerOpen(false)} className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Sign Up</Link>
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {drawerOpen && (
+           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setDrawerOpen(false)}
+             style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 1999 }} />
+        )}
+      </AnimatePresence>
     </>
   );
 }

@@ -52,7 +52,7 @@ export default function ItemDetail() {
       const res = await usersAPI.saveItem(item._id);
       setSaved(res.data.saved);
       toast.success(res.data.saved ? 'Item saved!' : 'Removed from saved');
-    } catch (e) {}
+    } catch (e) { }
   };
 
   if (loading) return <SkeletonDetail />;
@@ -207,7 +207,7 @@ export default function ItemDetail() {
             <div style={{ padding: 20, borderRadius: 20, background: 'rgba(107, 79, 58, 0.05)', border: '1px solid rgba(107, 79, 58, 0.1)', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
               <AlertTriangle size={20} color="var(--primary)" style={{ flexShrink: 0, marginTop: 2 }} />
               <p style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.6, fontWeight: 500 }}>
-                <strong style={{ color: 'var(--primary)', fontWeight: 800 }}>Safety Tip:</strong> Always meet in campus public areas. Use our secure payment system. Never pay outside the platform.
+                <strong style={{ color: 'var(--primary)', fontWeight: 800 }}>Safety Tip:</strong> Always meet in campus public areas.
               </p>
             </div>
           </div>

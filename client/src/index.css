@@ -26,6 +26,7 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 
   body {
@@ -35,6 +36,8 @@
     min-height: 100vh;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    width: 100%;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -139,7 +142,7 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     color: var(--text);
-    font-size: 15px;
+    font-size: 16px; /* Must be 16px to prevent iOS Safari auto-zoom */
     transition: all 0.2s ease;
     outline: none;
   }
@@ -168,14 +171,15 @@
 
   /* Typography Utilities */
   .section-title {
-    font-size: clamp(2rem, 5vw, 2.5rem);
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
     font-weight: 800;
     letter-spacing: -0.025em;
     margin-bottom: 1rem;
+    line-height: 1.1;
   }
   .section-subtitle {
     color: var(--text-muted);
-    font-size: 1.125rem;
+    font-size: clamp(1rem, 3vw, 1.125rem);
     max-width: 600px;
     margin-bottom: 3rem;
   }
@@ -191,6 +195,18 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 24px;
+  }
+
+  /* Auth Screens */
+  .auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px 40px;
+  }
+  .auth-card {
+    padding: 40px 32px;
   }
 
   /* Minimal Chat */
@@ -254,17 +270,31 @@
 }
 @media (max-width: 768px) {
   :root {
-    --hero-px-left: 20px;
-    --hero-px-right: 20px;
+    --hero-px-left: 16px;
+    --hero-px-right: 16px;
+    --header-height: 60px;
   }
   .page-container { padding: 0 16px; }
-  .items-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-  .section-title { font-size: 1.75rem; }
+  
+  .auth-container { padding: 60px 16px 30px; }
+  .auth-card { padding: 32px 20px; }
+  
+  /* Auto-fit with minmax to allow 1 column on small phones, 2 on wide tablets */
+  .items-grid { 
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); 
+    gap: 16px; 
+  }
+  @media (min-width: 480px) {
+    .items-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  }
+
   .desktop-nav, .desktop-search { display: none !important; }
   .mobile-nav { display: flex !important; }
+  .mobile-only-flex { display: flex !important; }
 }
 
 /* Hide tailwind artifacts if any */
+.mobile-only-flex { display: none; }
 .gradient-bg {
   background: var(--bg);
 }

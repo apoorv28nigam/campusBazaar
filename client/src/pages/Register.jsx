@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, GraduationCap, BookOpen, ShoppingCart, ArrowRight, CheckCircle, ShieldCheck, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { authAPI, usersAPI } from '../services/api';
-import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
+import { authAPI } from '../services/api';
 import OTPInput from '../components/auth/OTPInput';
 import toast from 'react-hot-toast';
 import { fadeUp, staggerContainer, btnTap, ease, dur, scaleIn } from '../components/animations/motionConfig';
@@ -28,7 +26,6 @@ export default function Register() {
   const [step, setStep] = useState(1);
   const [timer, setTimer] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,8 +50,8 @@ export default function Register() {
     if (!form.college) return toast.error('Please select your college');
     setLoading(true);
     try {
-      await authAPI.sendOtp(form.email);
-      toast.success('OTP sent to your email!');
+      await authAPI.register(form);
+      toast.success('Account created! OTP sent to your email.');
       setStep(3);
       setTimer(30);
     } catch (err) {
@@ -67,28 +64,9 @@ export default function Register() {
   const handleVerifyOTP = async (otp) => {
     setLoading(true);
     try {
-      const res = await authAPI.verifyOtp(form.email, otp);
-      if (res.data.session) {
-        const { error } = await supabase.auth.setSession({
-          access_token: res.data.session.access_token,
-          refresh_token: res.data.session.refresh_token,
-        });
-        if (error) throw error;
-
-        try {
-          await usersAPI.updateProfile({
-            name: form.name,
-            college: form.college,
-            course: form.course,
-            year: form.year
-          });
-        } catch (e) { console.error('Profile update failed:', e) }
-
-        toast.success(`Welcome to CampusBazaar, ${form.name.split(' ')[0]}!`);
-        navigate('/buy');
-      } else {
-        throw new Error('Failed to establish session.');
-      }
+      const res = await authAPI.verifyRegister(form.email, otp);
+      toast.success(res.data.message || 'Email verified successfully!');
+      navigate('/login', { state: { email: form.email } });
     } catch (err) {
       toast.error(err.response?.data?.message || err.message || 'Invalid OTP');
       setResetTrigger(prev => prev + 1);
@@ -98,7 +76,7 @@ export default function Register() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px 40px' }}>
+    <div className="auth-container">
       <div style={{ width: '100%', maxWidth: 480 }}>
         {/* Logo */}
         <motion.div
@@ -128,8 +106,8 @@ export default function Register() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="card"
-          style={{ padding: 32, overflow: 'hidden' }}
+          className="card auth-card"
+          style={{ overflow: 'hidden' }}
         >
           <AnimatePresence mode="wait">
             {step === 1 ? (

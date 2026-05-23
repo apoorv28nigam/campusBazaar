@@ -1,79 +1,58 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Mail, ArrowRight, ShoppingCart, ShieldCheck, RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { Mail, Lock, Eye, EyeOff, ShoppingCart, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { authAPI } from '../services/api';
-import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
-import OTPInput from '../components/auth/OTPInput';
 import { fadeUp, btnTap, ease, dur } from '../components/animations/motionConfig';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [step, setStep] = useState(1); // 1: Email, 2: OTP
-  const [loading, setLoading] = useState(false);
-  const [timer, setTimer] = useState(0);
-  const [resetTrigger, setResetTrigger] = useState(0);
+  const location = useLocation();
   const navigate = useNavigate();
   const { login } = useAuth();
+  
+  const [email, setEmail] = useState(location.state?.email || '');
+  const [password, setPassword] = useState('');
+  const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let interval;
-    if (timer > 0) {
-      interval = setInterval(() => setTimer((t) => t - 1), 1000);
+    // Clear location state after reading it to avoid persistence on refresh
+    if (location.state?.email) {
+      window.history.replaceState({}, document.title);
     }
-    return () => clearInterval(interval);
-  }, [timer]);
+  }, [location]);
 
-  const handleSendOTP = async (e) => {
-    if (e) e.preventDefault();
-    if (!email) return toast.error('Please enter your email');
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!email || !password) return toast.error('Please enter email and password');
 
     setLoading(true);
     try {
-      await authAPI.sendOtp(email);
-      toast.success('OTP sent to your email!');
-      setStep(2);
-      setTimer(30); // 30s cooldown for resend
-    } catch (err) {
-      toast.error(err.response?.data?.message || err.message || 'Failed to send OTP');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOTP = async (otp) => {
-    setLoading(true);
-    try {
-      const res = await authAPI.verifyOtp(email, otp);
-
-      if (res.data.session) {
-        // Set Supabase session client-side
-        const { error } = await supabase.auth.setSession({
-          access_token: res.data.session.access_token,
-          refresh_token: res.data.session.refresh_token,
-        });
-        if (error) throw error;
-
+      const res = await authAPI.login(email, password);
+      
+      if (res.data.token) {
         // Update AuthContext synchronously so isAuth becomes true before navigation
-        login(res.data.session, res.data.mongoUser, res.data.token);
-
-        toast.success('Verified successfully!');
+        // We pass null for supabaseSession as we now rely on JWT
+        login(null, res.data.mongoUser, res.data.token);
+        toast.success('Logged in successfully!');
         navigate('/buy');
-      } else {
-        throw new Error('Failed to establish session.');
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message || 'Invalid OTP');
-      setResetTrigger(prev => prev + 1); // Clear OTP inputs on error
+      if (err.response?.data?.notVerified) {
+        toast.error('Please verify your email first.');
+        // We could redirect to a verify screen if we wanted, but the backend requires OTP flow.
+      } else {
+        toast.error(err.response?.data?.message || err.message || 'Login failed');
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px 40px' }}>
+    <div className="auth-container">
       <div style={{ width: '100%', maxWidth: 440 }}>
         {/* Logo */}
         <motion.div
@@ -98,125 +77,77 @@ export default function Login() {
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="card"
-          style={{ padding: '40px 32px' }}
+          className="card auth-card"
         >
-          <AnimatePresence mode="wait">
-            {step === 1 ? (
-              <motion.div
-                key="step1"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div style={{ marginBottom: 24, textAlign: 'center' }}>
-                  <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)' }}>Welcome Back</h2>
-                  <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 4 }}>Enter your email to receive a 6-digit code</p>
-                </div>
+          <div style={{ marginBottom: 24, textAlign: 'center' }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)' }}>Welcome Back</h2>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 4 }}>Enter your credentials to continue</p>
+          </div>
 
-                <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                  <div>
-                    <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 8, letterSpacing: '0.05em' }}>EMAIL ADDRESS</label>
-                    <div style={{ position: 'relative' }}>
-                      <Mail size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                      <input
-                        className="input"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="you@college.edu.in"
-                        style={{ paddingLeft: 46, background: '#f9fafb', height: 56, fontSize: 15 }}
-                        required
-                        autoFocus
-                      />
-                    </div>
-                  </div>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 8, letterSpacing: '0.05em' }}>EMAIL ADDRESS</label>
+              <div style={{ position: 'relative' }}>
+                <Mail size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input
+                  className="input"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@college.edu.in"
+                  style={{ paddingLeft: 46, background: '#f9fafb', height: 56, fontSize: 15 }}
+                  required
+                  autoFocus
+                />
+              </div>
+            </div>
 
-                  <motion.button
-                    {...btnTap}
-                    type="submit"
-                    className="btn-primary"
-                    disabled={loading}
-                    style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: 16, height: 56, marginTop: 8 }}
-                  >
-                    {loading ? (
-                      <div className="spinner" style={{ width: 24, height: 24, border: '3px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                    ) : (
-                      <><span>Continue</span><ArrowRight size={20} /></>
-                    )}
-                  </motion.button>
-                </form>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div style={{ marginBottom: 32, textAlign: 'center' }}>
-                  <div style={{ width: 48, height: 48, background: 'var(--primary-light)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                    <ShieldCheck size={24} color="var(--primary)" />
-                  </div>
-                  <h2 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text)' }}>Verify Email</h2>
-                  <p style={{ fontSize: 14, color: 'var(--text-muted)', marginTop: 4 }}>
-                    We sent a 6-digit code to <br />
-                    <span style={{ fontWeight: 600, color: 'var(--text)' }}>{email}</span>
-                  </p>
-                  <button
-                    onClick={() => setStep(1)}
-                    style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: 13, fontWeight: 600, marginTop: 8, cursor: 'pointer' }}
-                  >
-                    Change Email
-                  </button>
-                </div>
+            <div>
+              <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 8, letterSpacing: '0.05em' }}>PASSWORD</label>
+              <div style={{ position: 'relative' }}>
+                <Lock size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input
+                  className="input"
+                  type={showPass ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Your password"
+                  style={{ paddingLeft: 46, paddingRight: 46, background: '#f9fafb', height: 56, fontSize: 15 }}
+                  required
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPass(p => !p)} 
+                  style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', display: 'flex', padding: 4 }}
+                >
+                  {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
 
-                <div style={{ marginBottom: 32 }}>
-                  <OTPInput onComplete={handleVerifyOTP} resetTrigger={resetTrigger} />
-                </div>
+            <motion.button
+              {...btnTap}
+              type="submit"
+              className="btn-primary"
+              disabled={loading}
+              style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: 16, height: 56, marginTop: 8 }}
+            >
+              {loading ? (
+                <div className="spinner" style={{ width: 24, height: 24, border: '3px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+              ) : (
+                <><span>Sign In</span><ArrowRight size={20} /></>
+              )}
+            </motion.button>
+          </form>
 
-                <div style={{ textAlign: 'center' }}>
-                  <button
-                    onClick={handleSendOTP}
-                    disabled={timer > 0 || loading}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      margin: '0 auto',
-                      background: 'none',
-                      border: 'none',
-                      color: timer > 0 ? 'var(--text-muted)' : 'var(--primary)',
-                      fontSize: 14,
-                      fontWeight: 700,
-                      cursor: timer > 0 ? 'default' : 'pointer',
-                      opacity: timer > 0 ? 0.6 : 1,
-                      transition: 'all 0.2s'
-                    }}
-                  >
-                    {timer > 0 ? (
-                      `Resend OTP in ${timer}s`
-                    ) : (
-                      <><RefreshCw size={16} /> Resend OTP</>
-                    )}
-                  </button>
-                </div>
-
-                {loading && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    style={{ marginTop: 24, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-                  >
-                    <div className="spinner" style={{ width: 16, height: 16, border: '2px solid var(--border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                    Verifying...
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <div style={{ marginTop: 24, textAlign: 'center' }}>
+            <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>
+              Don't have an account?{' '}
+              <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
+                Sign up
+              </Link>
+            </p>
+          </div>
         </motion.div>
 
         {/* Footer info */}

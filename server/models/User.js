@@ -5,14 +5,14 @@ const userSchema = new mongoose.Schema({
   supabaseId: { type: String, unique: true, sparse: true },
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password: { type: String, required: false }, // Optional for OTP users
+  password: { type: String, required: false }, // Optional for older OTP users, required for new
   avatar: { type: String, default: '' },
   college: { type: String, required: false, trim: true }, // Optional during initial sign up
   course: { type: String, trim: true, default: '' },
   year: { type: String, default: '' },
   bio: { type: String, default: '' },
   phone: { type: String, default: '' },
-  isVerified: { type: Boolean, default: true }, // OTP verified users are verified
+  isVerified: { type: Boolean, default: false }, // Now false by default until OTP verification
   verificationToken: { type: String },
   rating: { type: Number, default: 0 },
   reviewsCount: { type: Number, default: 0 },

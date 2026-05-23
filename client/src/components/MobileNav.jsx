@@ -16,9 +16,9 @@ export default function MobileNav() {
       position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000,
       background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(20px)',
       borderTop: '1px solid var(--border)',
-      boxShadow: '0 -1px 3px rgba(0,0,0,0.05)',
+      boxShadow: '0 -10px 40px rgba(107, 79, 58, 0.08)',
       display: 'none', alignItems: 'center', justifyContent: 'space-around',
-      padding: '8px 0 env(safe-area-inset-bottom, 12px)',
+      padding: '10px 8px max(env(safe-area-inset-bottom), 16px)',
     }} className="mobile-nav">
       {tabs.map(({ to, icon: Icon, label }) => {
         const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to));
@@ -29,13 +29,13 @@ export default function MobileNav() {
             transition: 'all 0.2s', padding: '4px 12px',
           }}>
             <div style={{
-              width: 40, height: 40, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: active ? 'var(--primary-light)' : 'transparent',
               transition: 'all 0.2s',
             }}>
-              <Icon size={20} strokeWidth={active ? 2.5 : 2} />
+              <Icon size={22} strokeWidth={active ? 2.5 : 2} />
             </div>
-            <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, letterSpacing: '0.01em' }}>{label}</span>
+            <span style={{ fontSize: 11, fontWeight: active ? 700 : 500, letterSpacing: '0.01em', marginTop: 2 }}>{label}</span>
           </Link>
         );
       })}

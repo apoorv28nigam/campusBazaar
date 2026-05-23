@@ -7,11 +7,12 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import CampusActivityFeed from '../components/CampusActivityFeed';
 
 // ── Animation helpers ────────────────────────────────────────────────────────
-import AnimatedSection   from '../components/animations/AnimatedSection';
+import AnimatedSection from '../components/animations/AnimatedSection';
 import { StaggerList, StaggerItem } from '../components/animations/StaggerList';
-import ScrollIndicator   from '../components/animations/ScrollIndicator';
+import ScrollIndicator from '../components/animations/ScrollIndicator';
 import {
   fadeUp, fadeDown, fadeIn, scaleIn, lineReveal,
   floatLoop, floatLoopAlt, glowPulse, staggerContainer,
@@ -20,40 +21,40 @@ import {
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 const CATEGORIES = [
-  { name: 'Books',       color: 'var(--primary)', bg: 'rgba(107, 79, 58, 0.08)'  },
-  { name: 'Electronics', color: 'var(--warning)', bg: 'rgba(198, 124, 78, 0.08)'  },
-  { name: 'Clothing',    color: '#8B5E3C',        bg: 'rgba(139, 94, 60, 0.08)'   },
-  { name: 'Furniture',   color: 'var(--success)', bg: 'rgba(94, 140, 97, 0.08)'   },
-  { name: 'Sports',      color: '#91A88A',        bg: 'rgba(145, 168, 138, 0.08)' },
-  { name: 'Stationery',  color: '#B08D74',        bg: 'rgba(176, 141, 116, 0.08)' },
-  { name: 'Free Items',  color: 'var(--success)', bg: 'rgba(94, 140, 97, 0.08)'   },
-  { name: 'Other',       color: 'var(--text-muted)', bg: 'rgba(130, 113, 100, 0.08)'},
+  { name: 'Books', color: 'var(--primary)', bg: 'rgba(107, 79, 58, 0.08)' },
+  { name: 'Electronics', color: 'var(--warning)', bg: 'rgba(198, 124, 78, 0.08)' },
+  { name: 'Clothing', color: '#8B5E3C', bg: 'rgba(139, 94, 60, 0.08)' },
+  { name: 'Furniture', color: 'var(--success)', bg: 'rgba(94, 140, 97, 0.08)' },
+  { name: 'Sports', color: '#91A88A', bg: 'rgba(145, 168, 138, 0.08)' },
+  { name: 'Stationery', color: '#B08D74', bg: 'rgba(176, 141, 116, 0.08)' },
+  { name: 'Free Items', color: 'var(--success)', bg: 'rgba(94, 140, 97, 0.08)' },
+  { name: 'Other', color: 'var(--text-muted)', bg: 'rgba(130, 113, 100, 0.08)' },
 ];
 
 const TESTIMONIALS = [
-  { name: 'Apoorv Nigam',  college: 'GLBITM',       text: 'Found a calculator for my exams for just ₹200! Seller was from my hostel. Amazing experience!',          rating: 5, avatar: 'PS' },
-  { name: 'Amit Singh',   college: 'GLBITM',  text: 'Sold my old laptop within 2 hours! CampusCart is incredible — no haggling with strangers.',              rating: 5, avatar: 'RM' },
-  { name: 'Utkarsh',  college: 'GLBITM',    text: 'Borrowed a projector for my presentation for just ₹150/day. Saved so much money!',                      rating: 5, avatar: 'AS' },
+  { name: 'Apoorv Nigam', college: 'GLBITM', text: 'Found a calculator for my exams for just ₹200! Seller was from my hostel. Amazing experience!', rating: 5, avatar: 'PS' },
+  { name: 'Amit Singh', college: 'GLBITM', text: 'Sold my old laptop within 2 hours! CampusCart is incredible — no haggling with strangers.', rating: 5, avatar: 'RM' },
+  { name: 'Utkarsh', college: 'GLBITM', text: 'Borrowed a projector for my presentation for just ₹150/day. Saved so much money!', rating: 5, avatar: 'AS' },
 ];
 
 const HOW_IT_WORKS_STEPS = [
-  { title: 'Create Your Account',    desc: 'Sign up with your college email to join your campus community. Verify your student status instantly.',           color: 'var(--primary)' },
-  { title: 'Browse or List Items',   desc: 'Browse items listed by your campus mates, or list your own items to sell or lend in seconds.',                  color: 'var(--warning)' },
-  { title: 'Chat & Transact Safely', desc: 'Chat directly, pay securely, and meet on campus. No strangers, only verified students!',                       color: 'var(--success)' },
+  { title: 'Create Your Account', desc: 'Sign up with your college email to join your campus community. Verify your student status instantly.', color: 'var(--primary)' },
+  { title: 'Browse or List Items', desc: 'Browse items listed by your campus mates, or list your own items to sell or lend in seconds.', color: 'var(--warning)' },
+  { title: 'Chat & Transact Safely', desc: 'Chat directly, pay securely, and meet on campus. No strangers, only verified students!', color: 'var(--success)' },
 ];
 
 // ── Page-load sequence timings ───────────────────────────────────────────────
 const PAGE_LOAD = {
-  bg:       { delay: 0   },
-  badge:    { delay: 0.2 },
+  bg: { delay: 0 },
+  badge: { delay: 0.2 },
   heading1: { delay: 0.3 },
   heading2: { delay: 0.45 },
   subtitle: { delay: 0.55 },
-  cta:      { delay: 0.7 },
-  trust:    { delay: 0.85 },
-  card1:    { delay: 0.4 },
-  card2:    { delay: 0.6 },
-  badge2:   { delay: 0.8 },
+  cta: { delay: 0.7 },
+  trust: { delay: 0.85 },
+  card1: { delay: 0.4 },
+  card2: { delay: 0.6 },
+  badge2: { delay: 0.8 },
 };
 
 
@@ -105,8 +106,8 @@ const BORROW_ITEMS = [
 function BorrowProductCard({ item }) {
   return (
     <motion.div
-      whileHover={{ 
-        y: -10, 
+      whileHover={{
+        y: -10,
         scale: 1.02,
         boxShadow: '0 30px 60px -12px rgba(107, 79, 58, 0.15), 0 18px 36px -18px rgba(107, 79, 58, 0.2)'
       }}
@@ -129,30 +130,30 @@ function BorrowProductCard({ item }) {
       }}
     >
       {/* Dynamic Floating Background Hint */}
-      <div style={{ 
-        position: 'absolute', 
-        top: -20, 
-        right: -20, 
-        width: 100, 
-        height: 100, 
-        borderRadius: '50%', 
-        background: item.iconBg, 
-        opacity: 0.4, 
+      <div style={{
+        position: 'absolute',
+        top: -20,
+        right: -20,
+        width: 100,
+        height: 100,
+        borderRadius: '50%',
+        background: item.iconBg,
+        opacity: 0.4,
         filter: 'blur(40px)',
         zIndex: 0
       }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', marginBottom: item.featured ? 24 : 16 }}>
-          <span style={{ 
-            fontSize: 11, 
-            fontWeight: 800, 
-            textTransform: 'uppercase', 
-            letterSpacing: '0.05em', 
-            background: 'rgba(34, 197, 94, 0.1)', 
-            color: '#16a34a', 
-            padding: '4px 10px', 
-            borderRadius: 99 
+          <span style={{
+            fontSize: 11,
+            fontWeight: 800,
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            background: 'rgba(34, 197, 94, 0.1)',
+            color: '#16a34a',
+            padding: '4px 10px',
+            borderRadius: 99
           }}>
             {item.badge}
           </span>
@@ -161,7 +162,7 @@ function BorrowProductCard({ item }) {
         <h3 style={{ fontSize: item.featured ? 24 : 18, fontWeight: 800, color: 'var(--text)', marginBottom: 8, fontFamily: 'Outfit, sans-serif' }}>
           {item.title}
         </h3>
-        
+
         {item.desc && (
           <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: item.featured ? 20 : 12, lineHeight: 1.5 }}>
             {item.desc}
@@ -175,13 +176,13 @@ function BorrowProductCard({ item }) {
       </div>
 
       <div style={{ marginTop: item.featured ? 32 : 20, position: 'relative', zIndex: 1 }}>
-        <button style={{ 
-          width: '100%', 
-          padding: '12px 16px', 
-          borderRadius: 12, 
-          background: 'var(--primary)', 
-          color: 'white', 
-          border: 'none', 
+        <button style={{
+          width: '100%',
+          padding: '12px 16px',
+          borderRadius: 12,
+          background: 'var(--primary)',
+          color: 'white',
+          border: 'none',
           fontWeight: 700,
           fontSize: 14,
           cursor: 'pointer',
@@ -206,12 +207,12 @@ export default function Landing() {
 
   return (
     <div style={{ background: 'var(--bg)', color: 'var(--text)', overflowX: 'hidden' }}>
-      
+
       {/* ── Section 1: Hero ── */}
-      <section className="hero-section" style={{ 
-        minHeight: '85vh', 
-        display: 'flex', 
-        alignItems: 'center', 
+      <section className="hero-section" style={{
+        minHeight: '85vh',
+        display: 'flex',
+        alignItems: 'center',
         paddingLeft: 'var(--hero-px-left, 80px)',
         paddingRight: 'var(--hero-px-right, 32px)',
         paddingTop: 120,
@@ -219,20 +220,20 @@ export default function Landing() {
         position: 'relative',
         background: 'var(--bg)'
       }}>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'minmax(0, 45%) minmax(0, 55%)', 
-          gap: 'clamp(40px, 5vw, 60px)', 
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 45%) minmax(0, 55%)',
+          gap: 'clamp(40px, 5vw, 60px)',
           alignItems: 'center',
           width: '100%',
           maxWidth: 1600, // Maximum width to prevent extreme stretching on ultra-wide screens
           margin: '0' // Align to the left padding
         }}>
-          
+
           <motion.div variants={fadeUp} initial="hidden" animate="visible" transition={{ duration: 0.6 }}>
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }} 
-              animate={{ opacity: 1, scale: 1 }} 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 18px', borderRadius: 99, background: 'rgba(107, 79, 58, 0.08)', border: '1px solid rgba(107, 79, 58, 0.1)', marginBottom: 32 }}
             >
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--primary)', boxShadow: '0 0 12px rgba(107, 79, 58, 0.3)' }} />
@@ -243,13 +244,13 @@ export default function Landing() {
               Buy, Sell & Borrow <br />
               <span style={{ color: 'var(--primary)' }}>Within Your Campus.</span>
             </h1>
-            
+
             <p style={{ fontSize: 'clamp(1.1rem, 2vw, 1.25rem)', color: 'var(--text-muted)', lineHeight: 1.7, marginBottom: 48, maxWidth: 520 }}>
-              The exclusive marketplace for verified college students. 
+              The exclusive marketplace for verified college students.
               Trade safely with your campus mates — books, tech, and more.
             </p>
 
-            <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 64 }}>
+            <div className="hero-btns" style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 64 }}>
               <motion.div {...btnTap}>
                 <Link to="/buy" className="btn-primary" style={{ padding: '18px 40px', fontSize: 16, borderRadius: 14, boxShadow: '0 8px 24px rgba(107, 79, 58, 0.15)' }}>
                   Browse Items
@@ -273,11 +274,11 @@ export default function Landing() {
           </motion.div>
 
           {/* Right Visual Section: Lottie Animation (Redesigned) */}
-          <motion.div 
-            initial={{ opacity: 0, x: 40 }} 
-            animate={{ opacity: 1, x: 0 }} 
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            style={{ 
+            style={{
               position: 'relative',
               width: '100%',
               display: 'flex',
@@ -286,9 +287,9 @@ export default function Landing() {
             }}
           >
             <div style={{ width: '100%', maxWidth: 750, position: 'relative' }}>
-              <div className="hero-animation" style={{ 
-                width: '120%', 
-                height: '120%', 
+              <div className="hero-animation" style={{
+                width: '120%',
+                height: '120%',
                 marginLeft: '-10%', // Center the 120% width relative to the container
                 marginTop: '-10%'   // Center the 120% height relative to the container
               }}>
@@ -319,6 +320,15 @@ export default function Landing() {
             }
             .hero-section div[style*="display: flex"] {
               justify-content: center !important;
+            }
+            .hero-btns {
+              flex-direction: column !important;
+              width: 100%;
+            }
+            .hero-btns > div, .hero-btns a {
+              width: 100%;
+              display: flex !important;
+              justify-content: center;
             }
           }
         `}</style>
@@ -366,7 +376,7 @@ export default function Landing() {
           <div className="category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
             {['Books', 'Electronics', 'Notes', 'Hostel Items', 'Cycles', 'Calculators', 'Furniture', 'Others'].map(cat => (
               <Link key={cat} to={`/buy?category=${cat.toLowerCase()}`} style={{ textDecoration: 'none' }}>
-                <motion.div 
+                <motion.div
                   whileHover={{ y: -4, borderColor: 'var(--primary)' }}
                   style={{ background: 'white', border: '1px solid var(--border)', borderRadius: 16, padding: '32px 24px', textAlign: 'center', transition: 'all 0.2s' }}
                 >
@@ -389,7 +399,7 @@ export default function Landing() {
               </div>
               <h2 className="section-title">Rent Per Day, Save Big</h2>
               <p style={{ fontSize: '1.125rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: 32 }}>
-                Need a calculator for one exam? Or a cycle for a week? 
+                Need a calculator for one exam? Or a cycle for a week?
                 Borrow from campus mates at affordable daily rates.
               </p>
               <ul style={{ listStyle: 'none', display: 'grid', gap: 16, marginBottom: 40 }}>
@@ -401,11 +411,11 @@ export default function Landing() {
               </ul>
               <Link to="/borrow" className="btn-primary" style={{ padding: '16px 36px' }}>Start Borrowing</Link>
             </div>
-            
+
             <div style={{ flex: 1 }}>
-              <StaggerList className="borrow-cards-grid" stagger={0.15} delayChildren={0.2} style={{ 
-                display: 'grid', 
-                gridTemplateColumns: 'repeat(2, 1fr)', 
+              <StaggerList className="borrow-cards-grid" stagger={0.15} delayChildren={0.2} style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
                 gap: 24,
                 position: 'relative'
               }}>
@@ -414,21 +424,21 @@ export default function Landing() {
                     <BorrowProductCard item={item} />
                   </StaggerItem>
                 ))}
-                
+
                 {/* Optional floating hint decoration */}
-                <motion.div 
-                  variants={floatLoop} 
-                  style={{ 
-                    position: 'absolute', 
-                    bottom: -30, 
-                    right: -30, 
-                    width: 120, 
-                    height: 120, 
-                    borderRadius: '50%', 
-                    background: 'var(--primary)', 
-                    opacity: 0.03, 
-                    zIndex: -1 
-                  }} 
+                <motion.div
+                  variants={floatLoop}
+                  style={{
+                    position: 'absolute',
+                    bottom: -30,
+                    right: -30,
+                    width: 120,
+                    height: 120,
+                    borderRadius: '50%',
+                    background: 'var(--primary)',
+                    opacity: 0.03,
+                    zIndex: -1
+                  }}
                 />
               </StaggerList>
             </div>
@@ -436,42 +446,25 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Section 5: Trust/Stats ── */}
-      <section style={{ padding: '100px 0', borderBottom: '1px solid var(--border)' }}>
-        <div className="page-container" style={{ textAlign: 'center' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: 60 }}>Trusted by Students</h2>
-          <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40 }}>
-            {[
-              { val: '2,000+', label: 'Active Listings' },
-              { val: '5k+', label: 'Verified Students' },
-              { val: '10k+', label: 'Successful Swaps' },
-              { val: '₹1M+', label: 'Student Savings' },
-            ].map(stat => (
-              <div key={stat.label}>
-                <h3 style={{ fontSize: '3rem', fontWeight: 800, color: 'var(--primary)', letterSpacing: '-0.02em', marginBottom: 8 }}>{stat.val}</h3>
-                <p style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 16 }}>{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── Section 5: Live Campus Activity Feed ── */}
+      <CampusActivityFeed />
 
       {/* ── Section 6: Founder's Message ── */}
       <section style={{ padding: '120px 0', background: 'white', borderTop: '1px solid var(--border)' }}>
         <div className="page-container">
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 420px) minmax(0, 1fr)', gap: 80, alignItems: 'center' }} className="mobile-stack">
             {/* Left: Picture Card */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="card" 
+              className="card"
               style={{ padding: 0, overflow: 'hidden', borderRadius: 32, border: '8px solid white', boxShadow: '0 24px 48px rgba(60, 47, 47, 0.12)' }}
             >
-              <img 
-                src="/founder.jpg" 
-                alt="Founder Portrait" 
-                style={{ width: '100%', height: 500, objectFit: 'cover', display: 'block' }} 
+              <img
+                src="/founder.jpg"
+                alt="Founder Portrait"
+                style={{ width: '100%', height: 500, objectFit: 'cover', display: 'block' }}
               />
             </motion.div>
 
@@ -499,7 +492,7 @@ export default function Landing() {
                 <p style={{ marginBottom: 40 }}>
                   Thank you for being part of this community. We’re just getting started on making student life more affordable and connected.
                 </p>
-                
+
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
                   <div style={{ width: 48, height: 2, background: 'var(--primary)' }} />
                   <div>
@@ -511,7 +504,7 @@ export default function Landing() {
             </motion.div>
           </div>
         </div>
-        
+
         <style>{`
           @media (max-width: 900px) {
             .mobile-stack {
@@ -583,21 +576,21 @@ export default function Landing() {
       <footer style={{ padding: '60px 0', background: 'white' }}>
         <div className="page-container footer-flex" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ color: 'white', fontWeight: 900, fontSize: 12, fontFamily: 'Outfit, sans-serif' }}>CB</span>
-                </div>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 24, color: 'var(--text)' }}>
-                  Campus<span style={{ color: 'var(--primary)' }}>Bazaar</span>
-                </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ color: 'white', fontWeight: 900, fontSize: 12, fontFamily: 'Outfit, sans-serif' }}>CB</span>
               </div>
-              <p style={{ color: 'var(--text-muted)', marginTop: 12, fontSize: 14 }}>The exclusive marketplace for verified students.</p>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 800, fontSize: 24, color: 'var(--text)' }}>
+                Campus<span style={{ color: 'var(--primary)' }}>Bazaar</span>
+              </span>
+            </div>
+            <p style={{ color: 'var(--text-muted)', marginTop: 12, fontSize: 14 }}>The exclusive marketplace for verified students.</p>
           </div>
           <div className="footer-links" style={{ display: 'flex', gap: 40, alignItems: 'center', fontSize: 14, fontWeight: 600, color: 'var(--text-muted)' }}>
-             <Link to="/buy">Marketplace</Link>
-             <Link to="/borrow">Borrowing</Link>
-             <Link to="/about">About Us</Link>
-             <Link to="/login" style={{ color: 'var(--primary)' }}>Get Started</Link>
+            <Link to="/buy">Marketplace</Link>
+            <Link to="/borrow">Borrowing</Link>
+            <Link to="/about">About Us</Link>
+            <Link to="/login" style={{ color: 'var(--primary)' }}>Get Started</Link>
           </div>
         </div>
         <div className="page-container" style={{ marginTop: 40, paddingTop: 40, borderTop: '1px solid var(--border)', textAlign: 'center', fontSize: 12, color: 'var(--text-muted)' }}>

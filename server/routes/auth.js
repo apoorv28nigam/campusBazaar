@@ -71,10 +71,82 @@ router.post('/otp/send', async (req, res) => {
 });
 
 /**
- * @desc  Verify OTP and create/login session
- * @route POST /api/auth/otp/verify
+ * @desc  Register new user & send OTP
+ * @route POST /api/auth/register
  */
-router.post('/otp/verify', async (req, res) => {
+router.post('/register', async (req, res) => {
+  try {
+    const { name, email, password, college, course, year } = req.body;
+    if (!name || !email || !password) return res.status(400).json({ message: 'Please provide all required fields' });
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    if (user) {
+      if (user.isVerified) {
+        return res.status(400).json({ message: 'User already exists and is verified' });
+      }
+      // If not verified, we can update details and send new OTP
+      user.name = name;
+      user.password = password; // Will be hashed by pre-save hook
+      if (college) user.college = college;
+      if (course) user.course = course;
+      if (year) user.year = year;
+    } else {
+      user = new User({
+        name,
+        email,
+        password,
+        college,
+        course,
+        year,
+        isVerified: false
+      });
+    }
+
+    await user.save();
+
+    // 1. Rate Limiting: Max 3 requests per minute per email
+    const oneMinuteAgo = new Date(Date.now() - 60 * 1000).toISOString();
+    const { count, error: countError } = await supabaseAdmin
+      .from('otp_codes')
+      .select('*', { count: 'exact', head: true })
+      .eq('email', email)
+      .gt('created_at', oneMinuteAgo);
+
+    if (countError) throw countError;
+    if (count >= 3) {
+      return res.status(429).json({ message: 'Too many OTP requests. Please wait a minute.' });
+    }
+
+    // 2. Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // 3. Hash OTP before storing
+    const hashedOtp = await bcrypt.hash(otp, 10);
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString(); // 5 minutes
+
+    // 4. Store in database
+    const { error: insertError } = await supabaseAdmin
+      .from('otp_codes')
+      .insert([{ email, otp: hashedOtp, expires_at: expiresAt }]);
+
+    if (insertError) throw insertError;
+
+    // 5. Send Email via Resend
+    await sendOTPEmail(email, otp);
+
+    res.status(201).json({ success: true, message: 'Registration successful, OTP sent' });
+  } catch (err) {
+    console.error('❌ /register Error:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @desc  Verify Registration OTP
+ * @route POST /api/auth/register/verify
+ */
+router.post('/register/verify', async (req, res) => {
   try {
     const { email, otp } = req.body;
     if (!email || !otp) return res.status(400).json({ message: 'Email and OTP are required' });
@@ -108,77 +180,58 @@ router.post('/otp/verify', async (req, res) => {
     // 4. Success -> Delete used OTP
     await supabaseAdmin.from('otp_codes').delete().eq('email', email);
 
-    // 5. Find existing Supabase auth user by email
-    const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
-    if (listError) throw listError;
-    const existingUser = users.find(u => u.email === email);
+    // 5. Mark user as verified
+    let user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-    let user;
-    const tempPassword = crypto.randomUUID();
+    user.isVerified = true;
+    await user.save();
 
-    if (existingUser) {
-      // Update existing user's password to enable signInWithPassword
-      const { data: updatedUser, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
-        password: tempPassword,
-        email_confirm: true
-      });
-      if (updateError) throw updateError;
-      user = updatedUser.user;
-    } else {
-      // Create new user
-      const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-        email: email,
-        password: tempPassword,
-        email_confirm: true
-      });
-      if (createError) throw createError;
-      user = newUser.user;
+    res.json({ success: true, message: 'Email verified successfully. Please log in.' });
+  } catch (err) {
+    console.error('❌ /register/verify Error:', err.message);
+    res.status(500).json({ message: 'Verification failed' });
+  }
+});
+
+/**
+ * @desc  Login user & get token
+ * @route POST /api/auth/login
+ */
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ message: 'Please provide email and password' });
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+
+    // Check if verified
+    if (!user.isVerified) {
+      return res.status(401).json({ message: 'Please verify your email first', notVerified: true });
     }
 
-    // Sign in with the temporary password to get a valid session
-    const { data: sessionData, error: signInError } = await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: tempPassword
-    });
-
-    if (signInError) throw signInError;
-
-    // 6. Upsert profile in our public.profiles table
-    const { error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .upsert({ id: user.id, email: email }, { onConflict: 'email' });
-
-    if (profileError) console.error('❌ Profile Upsert Error:', profileError);
-
-    // 7. Find or create MongoDB User and generate standard JWT
-    let mongoUser = await User.findOne({ email });
-    if (!mongoUser) {
-      mongoUser = await User.create({
-        email,
-        name: email.split('@')[0], // Default name
-        supabaseId: user.id,
-        isVerified: true
-      });
-    } else if (!mongoUser.supabaseId) {
-      mongoUser.supabaseId = user.id;
-      await mongoUser.save();
+    // Check password
+    if (!user.password) {
+      return res.status(401).json({ message: 'Please use Forgot Password to set a password' });
     }
 
-    const token = jwt.sign({ id: mongoUser._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
+    const isMatch = await user.matchPassword(password);
+    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
-    // Return the session back to the client
+    // Generate token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE || '7d' });
+
     res.json({
       success: true,
-      message: 'Verified successfully',
-      session: sessionData.session,
-      user: user,
       token,
-      mongoUser
+      mongoUser: user,
+      user: { id: user.supabaseId || user._id, email: user.email } // Dummy session user for frontend compat
     });
-
   } catch (err) {
-    console.error('❌ Verify OTP Error:', err.message);
-    res.status(500).json({ message: 'Verification failed' });
+    console.error('❌ /login Error:', err.message);
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
