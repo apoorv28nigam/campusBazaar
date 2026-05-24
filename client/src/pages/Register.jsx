@@ -139,7 +139,7 @@ export default function Register() {
                 </motion.div>
 
                 <motion.div variants={fadeUp}>
-                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 8 }}>COLLEGE EMAIL</label>
+                  <label style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 8 }}>EMAIL</label>
                   <div style={{ position: 'relative' }}>
                     <Mail size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input className="input" type="email" name="email" value={form.email} onChange={handleChange}
