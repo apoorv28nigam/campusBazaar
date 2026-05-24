@@ -62,14 +62,14 @@ export default function ItemDetail() {
   const images = item.images?.length ? item.images : [`https://placehold.co/600x400/1a1a2e/6366f1?text=${encodeURIComponent(item.title)}`];
 
   return (
-    <div style={{ paddingTop: 100, paddingBottom: 100, minHeight: '100vh', background: 'var(--bg)' }}>
+    <div className="item-detail-page">
       <div className="page-container">
         {/* Back */}
-        <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, marginBottom: 32, fontFamily: 'Outfit, sans-serif', padding: 0 }}>
+        <button onClick={() => navigate(-1)} className="item-detail-back">
           <ArrowLeft size={18} /> Back to listings
         </button>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: 40, alignItems: 'start' }}>
+        <div className="item-detail-grid">
           {/* Left */}
           <div>
             {/* Main image */}
@@ -103,7 +103,7 @@ export default function ItemDetail() {
             )}
 
             {/* Description */}
-            <div className="card" style={{ marginTop: 32, padding: 32, border: '1px solid var(--border)' }}>
+            <div className="card item-description-card">
               <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 16, fontFamily: 'Outfit, sans-serif' }}>Description</h2>
               <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: 16, fontWeight: 500, whiteSpace: 'pre-wrap' }}>{item.description}</p>
               {item.tags?.length > 0 && (
@@ -115,9 +115,9 @@ export default function ItemDetail() {
           </div>
 
           {/* Right sidebar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div className="item-detail-sidebar">
             {/* Item info */}
-            <div className="card" style={{ padding: 32, border: '1px solid var(--border)' }}>
+            <div className="card item-info-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
                 <span style={{ padding: '6px 14px', borderRadius: 10, background: 'var(--primary-light)', color: 'var(--primary)', fontSize: 13, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.category}</span>
                 <div style={{ display: 'flex', gap: 10 }}>
@@ -130,9 +130,9 @@ export default function ItemDetail() {
                 </div>
               </div>
 
-              <h1 style={{ fontSize: 32, fontWeight: 800, color: 'var(--text)', marginBottom: 12, fontFamily: 'Outfit, sans-serif', lineHeight: 1.2 }}>{item.title}</h1>
+              <h1 className="item-detail-title">{item.title}</h1>
 
-              <div style={{ fontSize: 36, fontWeight: 900, fontFamily: 'Outfit, sans-serif', marginBottom: 24, color: 'var(--primary)' }}>
+              <div className="item-detail-price">
                 {item.isFree ? 'FREE' : `₹${item.price?.toLocaleString('en-IN')}`}
               </div>
 
@@ -180,7 +180,7 @@ export default function ItemDetail() {
             </div>
 
             {/* Seller card */}
-            <div className="card" style={{ padding: 24, border: '1px solid var(--border)' }}>
+            <div className="card item-seller-card">
               <h3 style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', marginBottom: 20, textTransform: 'uppercase', letterSpacing: '0.1em' }}>About the Seller</h3>
               <Link to={`/profile/${item.seller._id}`} style={{ display: 'flex', gap: 16, alignItems: 'center', textDecoration: 'none' }}>
                 <img src={item.seller.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(item.seller.name)}&background=6b4f3a&color=fff&size=56`}
