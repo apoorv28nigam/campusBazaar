@@ -10,9 +10,14 @@ export const SocketProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [notifications, setNotifications] = useState([]);
 
+  // Derive the backend socket URL from VITE_API_URL (strip trailing /api or /api/ if present)
+  const SOCKET_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5001')
+    .trim()
+    .replace(/\/api\/?$/, '');
+
   useEffect(() => {
     if (user) {
-      socketRef.current = io('/', { withCredentials: true, transports: ['websocket', 'polling'] });
+      socketRef.current = io(SOCKET_URL, { withCredentials: true, transports: ['websocket', 'polling'] });
       const socket = socketRef.current;
 
       socket.emit('join', user._id);
