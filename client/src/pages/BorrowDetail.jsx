@@ -169,7 +169,7 @@ export default function BorrowDetail() {
                   {item.status === 'borrowed' && (
                     <button onClick={async () => { await borrowAPI.markReturned(item._id); toast.success('Marked as returned!'); navigate(0); }} className="btn-primary" style={{ flex: 1, justifyContent: 'center', padding: '16px', fontSize: 15, fontWeight: 800 }}>Mark Returned</button>
                   )}
-                  <Link to={`/sell/${item._id}/edit`} className="btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '16px', fontSize: 15, display: 'flex', alignItems: 'center', fontWeight: 700, background: 'white', border: '1px solid var(--border)' }}>Edit Details</Link>
+                  <Link to={`/borrow/${item._id}/edit`} className="btn-secondary" style={{ flex: 1, justifyContent: 'center', padding: '16px', fontSize: 15, display: 'flex', alignItems: 'center', fontWeight: 700, background: 'white', border: '1px solid var(--border)' }}>Edit Details</Link>
                 </div>
               ) : item.status === 'available' ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

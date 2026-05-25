@@ -15,6 +15,7 @@ import EditListing from './pages/EditListing';
 import Borrow from './pages/Borrow';
 import BorrowDetail from './pages/BorrowDetail';
 import CreateBorrow from './pages/CreateBorrow';
+import EditBorrow from './pages/EditBorrow';
 import Messages from './pages/Messages';
 import ChatWindow from './pages/ChatWindow';
 import Profile from './pages/Profile';
@@ -53,6 +54,7 @@ function AppContent() {
         <Route path="/sell" element={<ProtectedRoute><Sell /></ProtectedRoute>} />
         <Route path="/sell/:id/edit" element={<ProtectedRoute><EditListing /></ProtectedRoute>} />
         <Route path="/borrow/create" element={<ProtectedRoute><CreateBorrow /></ProtectedRoute>} />
+        <Route path="/borrow/:id/edit" element={<ProtectedRoute><EditBorrow /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
         <Route path="/messages/:id" element={<ProtectedRoute><ChatWindow /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><MyProfile /></ProtectedRoute>} />

@@ -89,7 +89,7 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    const { title, description, rentPerDay, securityDeposit, category, condition, availableFrom, availableTo, imageFit } = req.body;
+    const { title, description, rentPerDay, securityDeposit, category, condition, availableFrom, availableTo, imageFit, location } = req.body;
     if (title) item.title = title;
     if (description) item.description = description;
     if (rentPerDay) item.rentPerDay = Number(rentPerDay);
@@ -99,10 +99,34 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
     if (availableFrom) item.availableFrom = new Date(availableFrom);
     if (availableTo) item.availableTo = new Date(availableTo);
     if (imageFit) item.imageFit = imageFit;
+    if (location !== undefined) item.location = location;
     if (req.files && req.files.length > 0) item.images = req.files.map(f => f.path);
 
     await item.save();
     res.json(item);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc  Update borrow listing status (available / paused / borrowed)
+// @route PATCH /api/borrow/:id/status
+router.patch('/:id/status', protect, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const ALLOWED = ['available', 'paused', 'borrowed', 'returned'];
+    if (!ALLOWED.includes(status)) {
+      return res.status(400).json({ message: `Status must be one of: ${ALLOWED.join(', ')}` });
+    }
+    const item = await BorrowItem.findById(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Item not found' });
+    if (item.owner.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    item.status = status;
+    if (status !== 'borrowed') item.currentBorrower = null;
+    await item.save();
+    res.json({ message: `Status updated to ${status}`, item });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

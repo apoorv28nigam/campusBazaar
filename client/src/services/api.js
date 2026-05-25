@@ -55,6 +55,7 @@ export const borrowAPI = {
   create: (data) => api.post('/borrow', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
   update: (id, data) => api.put(`/borrow/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
   delete: (id) => api.delete(`/borrow/${id}`),
+  markStatus: (id, status) => api.patch(`/borrow/${id}/status`, { status }),
   request: (id, data) => api.post(`/borrow/${id}/request`, data),
   respond: (id, requestId, status) => api.put(`/borrow/${id}/request/${requestId}`, { status }),
   markReturned: (id) => api.put(`/borrow/${id}/return`),

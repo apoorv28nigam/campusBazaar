@@ -15,7 +15,7 @@ const borrowItemSchema = new mongoose.Schema({
   college: { type: String, required: true },
   availableFrom: { type: Date, required: true },
   availableTo: { type: Date, required: true },
-  status: { type: String, enum: ['available', 'borrowed', 'returned', 'pending'], default: 'available' },
+  status: { type: String, enum: ['available', 'borrowed', 'returned', 'pending', 'paused'], default: 'available' },
   currentBorrower: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   borrowRequests: [{
     borrower: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
@@ -26,6 +26,7 @@ const borrowItemSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
   }],
   condition: { type: String, enum: ['new', 'like-new', 'good', 'fair'], default: 'good' },
+  location: { type: String, default: '' },
   views: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true },
   imageFit: { type: String, enum: ['contain', 'cover'], default: 'contain' },
