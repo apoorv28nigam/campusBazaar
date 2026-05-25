@@ -19,6 +19,7 @@ const itemSchema = new mongoose.Schema({
   tags: [{ type: String }],
   location: { type: String, default: '' },
   isActive: { type: Boolean, default: true },
+  imageFit: { type: String, enum: ['contain', 'cover'], default: 'contain' },
 }, { timestamps: true });
 
 itemSchema.index({ title: 'text', description: 'text', tags: 'text' });

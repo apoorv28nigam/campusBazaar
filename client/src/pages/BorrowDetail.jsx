@@ -62,17 +62,17 @@ export default function BorrowDetail() {
   const days = calcDays();
 
   return (
-    <div style={{ paddingTop: 100, paddingBottom: 100, minHeight: '100vh', background: 'var(--bg)' }}>
+    <div className="std-page">
       <div className="page-container">
-        <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, marginBottom: 32, fontFamily: 'Outfit, sans-serif', padding: 0 }}>
+        <button onClick={() => navigate(-1)} className="std-back-btn" style={{ marginBottom: 32 }}>
           <ArrowLeft size={18} /> Back to Borrow
         </button>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: 40, alignItems: 'start' }}>
+        <div className="borrow-detail-grid">
           {/* Left */}
           <div>
             <div style={{ borderRadius: 24, overflow: 'hidden', marginBottom: 16, background: 'white', aspectRatio: '4/3', position: 'relative', border: '1px solid var(--border)', boxShadow: '0 8px 30px rgba(0,0,0,0.05)' }}>
-              <img src={images[currentImg]} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={images[currentImg]} alt={item.title} style={{ width: '100%', height: '100%', objectFit: item.imageFit || 'contain' }} />
               {images.length > 1 && (
                 <>
                   <button onClick={() => setCurrentImg(p => (p - 1 + images.length) % images.length)} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: 'white', border: '1px solid var(--border)', cursor: 'pointer', color: 'var(--text)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>‹</button>
@@ -90,14 +90,14 @@ export default function BorrowDetail() {
               </div>
             )}
 
-            <div className="card" style={{ marginTop: 32, padding: 32, border: '1px solid var(--border)' }}>
+            <div className="card borrow-detail-desc-card">
               <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 16, fontFamily: 'Outfit, sans-serif' }}>About this item</h2>
               <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: 16, fontWeight: 500 }}>{item.description}</p>
             </div>
 
             {/* Borrow requests (owner view) */}
             {isOwner && item.borrowRequests?.length > 0 && (
-              <div className="card" style={{ marginTop: 32, padding: 32, border: '1px solid var(--border)' }}>
+              <div className="card borrow-detail-desc-card">
                 <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--text)', marginBottom: 20, fontFamily: 'Outfit, sans-serif' }}>Borrow Requests</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   {item.borrowRequests.map(req => (
@@ -131,12 +131,12 @@ export default function BorrowDetail() {
           </div>
 
           {/* Right sidebar */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div className="card" style={{ padding: 32, border: '1px solid var(--border)' }}>
+          <div className="borrow-detail-sidebar">
+            <div className="card borrow-info-card">
               <div style={{ padding: '6px 14px', borderRadius: 10, background: 'rgba(198, 124, 78, 0.1)', border: '1px solid rgba(198, 124, 78, 0.2)', color: 'var(--primary)', fontSize: 13, fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 16, textTransform: 'uppercase' }}>
                 <RefreshCw size={14} /> For Rent
               </div>
-              <h1 style={{ fontSize: 32, fontWeight: 800, color: 'var(--text)', marginBottom: 12, fontFamily: 'Outfit, sans-serif', lineHeight: 1.2 }}>{item.title}</h1>
+              <h1 className="borrow-detail-title">{item.title}</h1>
 
               <div style={{ display: 'flex', gap: 16, marginBottom: 24, alignItems: 'baseline' }}>
                 <div style={{ fontSize: 36, fontWeight: 900, fontFamily: 'Outfit, sans-serif', color: 'var(--primary)' }}>₹{item.rentPerDay}<span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-muted)' }}>/day</span></div>

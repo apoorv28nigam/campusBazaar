@@ -28,6 +28,7 @@ const borrowItemSchema = new mongoose.Schema({
   condition: { type: String, enum: ['new', 'like-new', 'good', 'fair'], default: 'good' },
   views: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true },
+  imageFit: { type: String, enum: ['contain', 'cover'], default: 'contain' },
 }, { timestamps: true });
 
 borrowItemSchema.index({ college: 1, status: 1, category: 1 });

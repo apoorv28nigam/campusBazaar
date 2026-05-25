@@ -66,7 +66,7 @@ export default function ItemCard({ item, onSave }) {
               alt={item.title}
               animate={{ scale: imgHover ? 1.1 : 1 }}
               transition={{ duration: 0.6, ease: ease.out }}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: item.imageFit || 'contain' }}
             />
 
             {/* Category badge */}

@@ -32,7 +32,7 @@ export default function BorrowCard({ item }) {
               alt={item.title}
               animate={{ scale: imgHover ? 1.07 : 1 }}
               transition={{ duration: 0.45, ease: ease.out }}
-              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: item.imageFit || 'contain' }}
             />
             <div style={{
               position: 'absolute', top: 10, left: 10,

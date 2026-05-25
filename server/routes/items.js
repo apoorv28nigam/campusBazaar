@@ -46,7 +46,7 @@ router.get('/', optionalAuth, async (req, res) => {
 // @route POST /api/items
 router.post('/', protect, upload.array('images', 5), async (req, res) => {
   try {
-    const { title, description, price, category, condition, tags, location } = req.body;
+    const { title, description, price, category, condition, tags, location, imageFit } = req.body;
     if (!title || !description || price === undefined || !category) {
       return res.status(400).json({ message: 'Please fill all required fields' });
     }
@@ -62,6 +62,7 @@ router.post('/', protect, upload.array('images', 5), async (req, res) => {
       isFree: Number(price) === 0,
       tags: tags ? tags.split(',').map(t => t.trim()) : [],
       location,
+      imageFit: imageFit || 'contain',
     });
 
     await item.populate('seller', 'name avatar college isVerified rating');
@@ -106,7 +107,7 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    const { title, description, price, category, condition, status, tags, location } = req.body;
+    const { title, description, price, category, condition, status, tags, location, imageFit } = req.body;
     if (title) item.title = title;
     if (description) item.description = description;
     if (price !== undefined) { item.price = Number(price); item.isFree = Number(price) === 0; }
@@ -115,6 +116,7 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
     if (status) item.status = status;
     if (tags) item.tags = tags.split(',').map(t => t.trim());
     if (location !== undefined) item.location = location;
+    if (imageFit) item.imageFit = imageFit;
     if (req.files && req.files.length > 0) item.images = req.files.map(f => f.path);
 
     await item.save();

@@ -416,3 +416,288 @@
     margin-bottom: 16px;
   }
 }
+
+/* ── Generic Page Wrapper ─────────────────────── */
+/* Applied to ALL pages via .std-page class */
+.std-page {
+  padding-top: 100px;
+  padding-bottom: 100px;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.std-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  font-family: 'Outfit', sans-serif;
+  padding: 0;
+}
+
+/* ── Checkout Page ────────────────────────────── */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 40px;
+  align-items: start;
+}
+
+.checkout-title {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.checkout-item-card {
+  padding: 32px;
+  display: flex;
+  gap: 24px;
+  border: 1px solid var(--border);
+}
+
+.checkout-item-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.checkout-summary-card {
+  padding: 32px;
+  position: sticky;
+  top: 120px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 900px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  /* Make order summary come first on mobile */
+  .checkout-summary-card {
+    order: -1;
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .std-page {
+    padding-top: 72px;
+    padding-bottom: 90px;
+  }
+  .checkout-title {
+    font-size: 28px;
+  }
+  .checkout-item-card {
+    padding: 16px;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .checkout-item-img {
+    width: 100px;
+    height: 100px;
+  }
+  .checkout-summary-card {
+    padding: 20px;
+  }
+}
+
+/* ── BorrowDetail Page ────────────────────────── */
+.borrow-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 40px;
+  align-items: start;
+}
+
+.borrow-detail-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.borrow-detail-desc-card {
+  margin-top: 32px;
+  padding: 32px;
+  border: 1px solid var(--border);
+}
+
+.borrow-info-card {
+  padding: 32px;
+  border: 1px solid var(--border);
+}
+
+.borrow-detail-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 12px;
+  font-family: 'Outfit', sans-serif;
+  line-height: 1.2;
+}
+
+@media (max-width: 900px) {
+  .borrow-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .borrow-detail-sidebar {
+    order: -1;
+  }
+  .borrow-detail-desc-card {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .borrow-detail-desc-card,
+  .borrow-info-card {
+    padding: 20px;
+  }
+  .borrow-detail-title {
+    font-size: 24px;
+  }
+  .borrow-detail-grid {
+    gap: 16px;
+  }
+}
+
+/* ── Buy / Explore Page ───────────────────────── */
+.buy-page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 768px) {
+  .buy-page-title {
+    font-size: 1.75rem;
+  }
+  /* Make search + sort stack on mobile */
+  .buy-search-row {
+    flex-direction: column !important;
+  }
+  .buy-search-row > form {
+    min-width: unset !important;
+    width: 100%;
+  }
+}
+
+/* ── Sell / Create Listing Page ───────────────── */
+.sell-page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.sell-section-card {
+  background: white;
+  padding: 32px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+@media (max-width: 768px) {
+  .sell-page-title {
+    font-size: 1.75rem;
+  }
+  .sell-section-card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+}
+
+/* ── Profile / MyProfile Page ─────────────────── */
+.profile-header-card {
+  padding: 40px;
+  margin-bottom: 32px;
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+}
+
+.profile-name {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .profile-header-card {
+    padding: 20px;
+    gap: 16px;
+    flex-direction: row;
+    align-items: center;
+  }
+  .profile-name {
+    font-size: 22px;
+  }
+}
+
+/* ── Requests Page ────────────────────────────── */
+.requests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.requests-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .requests-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .requests-title {
+    font-size: 22px;
+  }
+  .requests-header > button {
+    width: 100%;
+    justify-content: center;
+  }
+  /* Broadcast modal grid – 2 cols → 1 col */
+  .broadcast-modal-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Messages Page ────────────────────────────── */
+@media (max-width: 768px) {
+  .messages-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Global no-scrollbar helper ───────────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+

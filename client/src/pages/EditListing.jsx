@@ -5,6 +5,7 @@ import { itemsAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { SkeletonDetail } from '../components/Loader';
 import toast from 'react-hot-toast';
+import ListingImageAdjuster from '../components/ListingImageAdjuster';
 
 const CATEGORIES = ['books','electronics','clothing','furniture','sports','stationery','food','other'];
 const CONDITIONS = ['new','like-new','good','fair','poor'];
@@ -21,6 +22,8 @@ export default function EditListing() {
   const [newImages, setNewImages] = useState([]);
   const [newPreviews, setNewPreviews] = useState([]);
   const [saving, setSaving] = useState(false);
+  const [imageFit, setImageFit] = useState('contain');
+  const [adjustingIdx, setAdjustingIdx] = useState(null);
 
   useEffect(() => {
     itemsAPI.getOne(id)
@@ -29,6 +32,7 @@ export default function EditListing() {
         if (i.seller._id !== user?._id) { toast.error('Not authorized'); navigate('/'); return; }
         setItem(i);
         setForm({ title: i.title, description: i.description, price: i.price, category: i.category, condition: i.condition, status: i.status, tags: i.tags?.join(', ') || '', location: i.location || '' });
+        setImageFit(i.imageFit || 'contain');
       })
       .finally(() => setLoading(false));
   }, [id]);
@@ -47,6 +51,7 @@ export default function EditListing() {
     try {
       const data = new FormData();
       Object.entries(form).forEach(([k, v]) => data.append(k, v));
+      data.append('imageFit', imageFit);
       newImages.forEach(img => data.append('images', img));
       await itemsAPI.update(id, data);
       toast.success('Listing updated!');
@@ -87,8 +92,11 @@ export default function EditListing() {
               {newPreviews.map((src, i) => (
                 <div key={i} style={{ position: 'relative', width: 80, height: 80, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)' }}>
                   <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <button type="button" onClick={() => { setNewImages(p => p.filter((_, j) => j !== i)); setNewPreviews(p => p.filter((_, j) => j !== i)); }} style={{ position: 'absolute', top: 4, right: 4, width: 24, height: 24, borderRadius: '50%', background: '#A65D57', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 6px rgba(0,0,0,0.2)' }}>
-                    <X size={12} />
+                  <button type="button" onClick={() => { setNewImages(p => p.filter((_, j) => j !== i)); setNewPreviews(p => p.filter((_, j) => j !== i)); }} style={{ position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: '50%', background: '#A65D57', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', zIndex: 10 }}>
+                    <X size={10} />
+                  </button>
+                  <button type="button" onClick={() => setAdjustingIdx(i)} style={{ position: 'absolute', bottom: 4, right: 4, padding: '2px 4px', borderRadius: 4, background: 'rgba(255, 255, 255, 0.95)', border: '1px solid var(--border)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 2, fontSize: 8, fontWeight: 800, boxShadow: '0 2px 4px rgba(0,0,0,0.1)', zIndex: 10 }}>
+                    Adjust
                   </button>
                 </div>
               ))}
@@ -98,7 +106,42 @@ export default function EditListing() {
                 </button>
               )}
             </div>
+
+            {/* Image fit option */}
+            <div style={{ marginTop: 20, padding: 16, borderRadius: 12, background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <label style={{ fontSize: 11, fontWeight: 800, color: 'var(--text)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Image Display Options
+              </label>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--text)', cursor: 'pointer' }}>
+                  <input type="radio" name="imageFit" value="contain" checked={imageFit === 'contain'} onChange={() => setImageFit('contain')} style={{ accentColor: 'var(--primary)', width: 16, height: 16 }} />
+                  Fit Entire Image (Recommended Default)
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--text)', cursor: 'pointer' }}>
+                  <input type="radio" name="imageFit" value="cover" checked={imageFit === 'cover'} onChange={() => setImageFit('cover')} style={{ accentColor: 'var(--primary)', width: 16, height: 16 }} />
+                  Crop to Fill
+                </label>
+              </div>
+              <p style={{ fontSize: 10, color: 'var(--text-muted)', margin: 0, lineHeight: 1.4 }}>
+                "Fit Entire Image" keeps the complete photo you uploaded without cropping. "Crop to Fill" will stretch the photo to cover the listing card.
+              </p>
+            </div>
+
             <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleImages} style={{ display: 'none' }} />
+
+            {/* Adjuster popup modal */}
+            {adjustingIdx !== null && (
+              <ListingImageAdjuster
+                image={newPreviews[adjustingIdx]}
+                onCancel={() => setAdjustingIdx(null)}
+                onCropComplete={(newBlob, newUrl) => {
+                  const adjustedFile = new File([newBlob], `adjusted_photo_${adjustingIdx}.jpeg`, { type: 'image/jpeg' });
+                  setNewImages(prev => prev.map((img, idx) => idx === adjustingIdx ? adjustedFile : img));
+                  setNewPreviews(prev => prev.map((url, idx) => idx === adjustingIdx ? newUrl : url));
+                  setAdjustingIdx(null);
+                }}
+              />
+            )}
           </div>
 
           <div className="card" style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 24, border: '1px solid var(--border)' }}>

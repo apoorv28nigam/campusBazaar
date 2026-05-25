@@ -42,30 +42,28 @@ export default function Checkout() {
   const total = item.price;
 
   return (
-    <div style={{ paddingTop: 100, paddingBottom: 100, minHeight: '100vh', background: 'var(--bg)' }}>
+    <div className="std-page">
       <div className="page-container" style={{ maxWidth: 1000 }}>
         {/* Header */}
         <div style={{ marginBottom: 40 }}>
-          <button onClick={() => navigate(-1)} style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700, marginBottom: 16, padding: 0, fontFamily: 'Outfit, sans-serif' }}>
+          <button onClick={() => navigate(-1)} className="std-back-btn">
             <ArrowLeft size={18} /> Back to item
           </button>
-          <h1 style={{ fontSize: 40, fontWeight: 800, color: 'var(--text)', fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}>
-            Checkout
-          </h1>
+          <h1 className="checkout-title">Checkout</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: 16, fontWeight: 500 }}>Review your order details below</p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: 40, alignItems: 'start' }}>
+        <div className="checkout-grid">
           {/* Left Column: Item Details */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {/* Item Card */}
-            <div className="card" style={{ padding: 32, display: 'flex', gap: 24, border: '1px solid var(--border)' }}>
-              <div style={{ width: 140, height: 140, borderRadius: 16, overflow: 'hidden', flexShrink: 0, border: '1px solid var(--border)' }}>
+            <div className="card checkout-item-card">
+              <div className="checkout-item-img">
                 <img src={item.images?.[0] || `https://placehold.co/400x300/6B4F3A/ffffff?text=${encodeURIComponent(item.title)}`} 
-                  alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  alt={item.title} style={{ width: '100%', height: '100%', objectFit: item.imageFit || 'contain' }} />
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 8 }}>
                   <div>
                     <span style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', background: 'var(--primary-light)', padding: '4px 12px', borderRadius: 8 }}>{item.category}</span>
                     <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)', marginTop: 12, marginBottom: 8, fontFamily: 'Outfit, sans-serif' }}>{item.title}</h2>
@@ -108,7 +106,7 @@ export default function Checkout() {
           </div>
 
           {/* Right Column: Order Summary */}
-          <div className="card" style={{ padding: 32, position: 'sticky', top: 120, border: '1px solid var(--border)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)' }}>
+          <div className="card checkout-summary-card">
             <h3 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text)', marginBottom: 32, fontFamily: 'Outfit, sans-serif' }}>Order Summary</h3>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, marginBottom: 32 }}>

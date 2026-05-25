@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Upload, X, ArrowLeft, Tag, FileText, DollarSign, Package, Image } from 'lucide-react';
 import { itemsAPI } from '../services/api';
 import toast from 'react-hot-toast';
+import ListingImageAdjuster from '../components/ListingImageAdjuster';
 
 const CATEGORIES = ['books','electronics','clothing','furniture','sports','stationery','food','other'];
 const CONDITIONS = ['new','like-new','good','fair','poor'];
@@ -14,6 +15,8 @@ export default function Sell() {
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [imageFit, setImageFit] = useState('contain');
+  const [adjustingIdx, setAdjustingIdx] = useState(null);
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -43,6 +46,7 @@ export default function Sell() {
     try {
       const data = new FormData();
       Object.entries(form).forEach(([k, v]) => data.append(k, v));
+      data.append('imageFit', imageFit);
       images.forEach(img => data.append('images', img));
 
       const res = await itemsAPI.create(data);
@@ -84,8 +88,11 @@ export default function Sell() {
               {previews.map((src, i) => (
                 <div key={i} style={{ position: 'relative', width: 120, height: 120, borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
                   <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  <button type="button" onClick={() => removeImage(i)} style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'white', border: 'none', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                    <X size={16} />
+                  <button type="button" onClick={() => removeImage(i)} style={{ position: 'absolute', top: 8, right: 8, width: 26, height: 26, borderRadius: '50%', background: 'white', border: 'none', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', zIndex: 10 }}>
+                    <X size={14} />
+                  </button>
+                  <button type="button" onClick={() => setAdjustingIdx(i)} style={{ position: 'absolute', bottom: 8, right: 8, padding: '4px 8px', borderRadius: 8, background: 'rgba(255, 255, 255, 0.95)', border: '1px solid var(--border)', color: 'var(--primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 800, boxShadow: '0 2px 4px rgba(0,0,0,0.1)', zIndex: 10 }}>
+                    Adjust
                   </button>
                 </div>
               ))}
@@ -107,7 +114,42 @@ export default function Sell() {
               )}
             </div>
             <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 16 }}>JPG, PNG or WEBP. Max 5 images.</p>
+            
+            {/* Image fit option */}
+            <div style={{ marginTop: 24, padding: 20, borderRadius: 16, background: 'var(--bg)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Image Display Options
+              </label>
+              <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 700, color: 'var(--text)', cursor: 'pointer' }}>
+                  <input type="radio" name="imageFit" value="contain" checked={imageFit === 'contain'} onChange={() => setImageFit('contain')} style={{ accentColor: 'var(--primary)', width: 18, height: 18 }} />
+                  Fit Entire Image (Recommended Default)
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 700, color: 'var(--text)', cursor: 'pointer' }}>
+                  <input type="radio" name="imageFit" value="cover" checked={imageFit === 'cover'} onChange={() => setImageFit('cover')} style={{ accentColor: 'var(--primary)', width: 18, height: 18 }} />
+                  Crop to Fill
+                </label>
+              </div>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>
+                "Fit Entire Image" keeps the complete photo you uploaded without cropping. "Crop to Fill" will stretch the photo to cover the listing card.
+              </p>
+            </div>
+
             <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleImages} style={{ display: 'none' }} />
+
+            {/* Adjuster popup modal */}
+            {adjustingIdx !== null && (
+              <ListingImageAdjuster
+                image={previews[adjustingIdx]}
+                onCancel={() => setAdjustingIdx(null)}
+                onCropComplete={(newBlob, newUrl) => {
+                  const adjustedFile = new File([newBlob], `adjusted_photo_${adjustingIdx}.jpeg`, { type: 'image/jpeg' });
+                  setImages(prev => prev.map((img, idx) => idx === adjustingIdx ? adjustedFile : img));
+                  setPreviews(prev => prev.map((url, idx) => idx === adjustingIdx ? newUrl : url));
+                  setAdjustingIdx(null);
+                }}
+              />
+            )}
           </div>
 
           {/* Details Section */}

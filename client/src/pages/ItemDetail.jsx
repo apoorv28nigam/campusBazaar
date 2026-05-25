@@ -75,7 +75,7 @@ export default function ItemDetail() {
             {/* Main image */}
             <div style={{ borderRadius: 24, overflow: 'hidden', marginBottom: 16, background: 'white', aspectRatio: '4/3', position: 'relative', border: '1px solid var(--border)', boxShadow: '0 8px 30px rgba(0,0,0,0.05)' }}>
               <img src={images[currentImg]} alt={item.title}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                style={{ width: '100%', height: '100%', objectFit: item.imageFit || 'contain' }} />
               {item.status !== 'available' && (
                 <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ background: item.status === 'sold' ? '#A65D57' : '#C67C4E', color: 'white', padding: '12px 32px', borderRadius: 12, fontWeight: 900, fontSize: 24, textTransform: 'uppercase', letterSpacing: 3, boxShadow: '0 8px 20px rgba(0,0,0,0.2)' }}>

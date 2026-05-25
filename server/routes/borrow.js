@@ -35,7 +35,7 @@ router.get('/', optionalAuth, async (req, res) => {
 // @route POST /api/borrow
 router.post('/', protect, upload.array('images', 5), async (req, res) => {
   try {
-    const { title, description, rentPerDay, securityDeposit, category, condition, availableFrom, availableTo } = req.body;
+    const { title, description, rentPerDay, securityDeposit, category, condition, availableFrom, availableTo, imageFit } = req.body;
     if (!title || !description || !rentPerDay || !securityDeposit || !category || !availableFrom || !availableTo) {
       return res.status(400).json({ message: 'Please fill all required fields' });
     }
@@ -51,6 +51,7 @@ router.post('/', protect, upload.array('images', 5), async (req, res) => {
       images,
       owner: req.user._id,
       college: req.user.college,
+      imageFit: imageFit || 'contain',
     });
 
     await item.populate('owner', 'name avatar college isVerified rating');
@@ -88,7 +89,7 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
-    const { title, description, rentPerDay, securityDeposit, category, condition, availableFrom, availableTo } = req.body;
+    const { title, description, rentPerDay, securityDeposit, category, condition, availableFrom, availableTo, imageFit } = req.body;
     if (title) item.title = title;
     if (description) item.description = description;
     if (rentPerDay) item.rentPerDay = Number(rentPerDay);
@@ -97,6 +98,7 @@ router.put('/:id', protect, upload.array('images', 5), async (req, res) => {
     if (condition) item.condition = condition;
     if (availableFrom) item.availableFrom = new Date(availableFrom);
     if (availableTo) item.availableTo = new Date(availableTo);
+    if (imageFit) item.imageFit = imageFit;
     if (req.files && req.files.length > 0) item.images = req.files.map(f => f.path);
 
     await item.save();
