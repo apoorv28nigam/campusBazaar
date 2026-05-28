@@ -138,32 +138,8 @@ export default function About() {
         </div>
       </section>
 
-      {/* ── 4. Stats Section ── */}
-      <section style={{ padding: '100px 0', background: 'var(--primary)', color: 'white' }}>
-        <div className="page-container" style={{ padding: '0 32px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 40, textAlign: 'center' }}>
-            {[
-              { label: 'Verified Students', value: '10,000+' },
-              { label: 'Active Listings', value: '5,000+' },
-              { label: 'Exchanges Made', value: '15,000+' },
-              { label: 'College Campuses', value: '50+' },
-            ].map((stat, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-              >
-                <h3 style={{ fontSize: '3rem', fontWeight: 800, fontFamily: 'Outfit, sans-serif', marginBottom: 8 }}>{stat.value}</h3>
-                <p style={{ fontSize: '1.125rem', fontWeight: 600, opacity: 0.8 }}>{stat.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ── 5. Why CampusBazaar Section ── */}
+      {/* ── 4. Why CampusBazaar Section ── */}
       <section style={{ padding: '120px 0', background: 'white' }}>
         <div className="page-container" style={{ padding: '0 32px', maxWidth: 1000, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 80 }}>
@@ -203,7 +179,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* ── 6. Final CTA Section ── */}
+      {/* ── 5. Final CTA Section ── */}
       <section style={{ padding: '120px 0', background: 'var(--bg)', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
