@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
   totalRating: { type: Number, default: 0 },
   savedItems: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
   recentlyViewed: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }],
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date },
 }, { timestamps: true });
 
 userSchema.pre('save', async function () {

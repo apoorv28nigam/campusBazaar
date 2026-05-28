@@ -235,4 +235,86 @@ router.post('/login', async (req, res) => {
   }
 });
 
+/**
+ * @desc  Forgot Password - Send Reset Link
+ * @route POST /api/auth/forgot-password
+ */
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const user = await User.findOne({ email });
+    // NEVER reveal whether email exists for security
+    if (!user) {
+      return res.json({ success: true, message: 'If an account exists, a password reset link has been sent.' });
+    }
+
+    // Generate secure reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    // Hash token and save to DB with expiry (15 mins)
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    
+    await user.save();
+
+    // Create reset URL
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
+
+    // Send email using existing config
+    const { sendResetPasswordEmail } = require('../config/email');
+    await sendResetPasswordEmail(user.email, resetUrl);
+
+    res.json({ success: true, message: 'If an account exists, a password reset link has been sent.' });
+  } catch (err) {
+    console.error('❌ /forgot-password Error:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+/**
+ * @desc  Reset Password
+ * @route POST /api/auth/reset-password/:token
+ */
+router.post('/reset-password/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    }
+
+    // Hash the token from URL to compare with DB
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    // Find user by valid token and check expiry
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() } // Token must not be expired
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired password reset token' });
+    }
+
+    // Update password (pre-save hook will hash it)
+    user.password = newPassword;
+    
+    // Clear reset token fields
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.json({ success: true, message: 'Password has been successfully reset. Please log in.' });
+  } catch (err) {
+    console.error('❌ /reset-password Error:', err.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

@@ -6,8 +6,11 @@ import Navbar from './components/Navbar';
 import MobileNav from './components/MobileNav';
 import ScrollProgressBar from './components/animations/ScrollProgressBar';
 import Landing from './pages/Landing';
+import About from './pages/About';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Buy from './pages/Buy';
 import ItemDetail from './pages/ItemDetail';
 import Sell from './pages/Sell';
@@ -45,8 +48,11 @@ function AppContent() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/about" element={<About />} />
         <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+        <Route path="/reset-password/:token" element={<PublicRoute><ResetPassword /></PublicRoute>} />
         <Route path="/buy" element={<ProtectedRoute><Buy /></ProtectedRoute>} />
         <Route path="/buy/:id" element={<ProtectedRoute><ItemDetail /></ProtectedRoute>} />
         <Route path="/borrow" element={<ProtectedRoute><Borrow /></ProtectedRoute>} />

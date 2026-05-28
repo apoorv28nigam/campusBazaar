@@ -45,4 +45,40 @@ const sendOTPEmail = async (email, otp) => {
   }
 };
 
-module.exports = { sendOTPEmail };
+const sendResetPasswordEmail = async (email, resetUrl) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'CampusBazaar <noreply@campusbazaar.online>',
+      to: email,
+      subject: 'Reset Your CampusBazaar Password',
+      html: `
+        <div style="font-family: 'Inter', sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; border: 1px solid #e5e7eb; border-radius: 16px; background-color: #ffffff;">
+          <div style="text-align: center; margin-bottom: 32px;">
+            <h2 style="color: #111827; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin: 0;">Campus<span style="color: #6B4F3A;">Bazaar</span></h2>
+          </div>
+          <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-bottom: 24px;">Hello,</p>
+          <p style="font-size: 16px; color: #374151; line-height: 1.6; margin-bottom: 32px;">We received a request to reset the password for your CampusBazaar account. Click the button below to set a new password:</p>
+          <div style="text-align: center; margin-bottom: 32px;">
+            <a href="${resetUrl}" style="display: inline-block; background-color: #111827; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 14px 28px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);">Reset Password</a>
+          </div>
+          <p style="font-size: 14px; color: #6b7280; text-align: center; margin-bottom: 24px;">This link will expire in 15 minutes.</p>
+          <p style="font-size: 14px; color: #6b7280; text-align: center; margin-bottom: 32px;">If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+          <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+          <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">&copy; ${new Date().getFullYear()} CampusBazaar. All rights reserved.</p>
+        </div>
+      `,
+    });
+
+    if (error) {
+      console.error('❌ Resend API Error (Reset Password):', error.message);
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    console.error('❌ Reset Email Sending Failed:', err.message);
+    return null;
+  }
+};
+
+module.exports = { sendOTPEmail, sendResetPasswordEmail };

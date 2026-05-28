@@ -123,6 +123,11 @@ export default function Login() {
                   {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
+                <Link to="/forgot-password" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none', fontWeight: 600, transition: 'color 0.2s' }} onMouseEnter={(e) => e.target.style.color = 'var(--text)'} onMouseLeave={(e) => e.target.style.color = 'var(--text-muted)'}>
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
 
             <motion.button

@@ -7,7 +7,6 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import CampusActivityFeed from '../components/CampusActivityFeed';
 
 // ── Animation helpers ────────────────────────────────────────────────────────
 import AnimatedSection from '../components/animations/AnimatedSection';
@@ -176,7 +175,7 @@ function BorrowProductCard({ item }) {
       </div>
 
       <div style={{ marginTop: item.featured ? 32 : 20, position: 'relative', zIndex: 1 }}>
-        <button style={{
+        <Link to="/borrow" style={{
           width: '100%',
           padding: '12px 16px',
           borderRadius: 12,
@@ -191,10 +190,11 @@ function BorrowProductCard({ item }) {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 8,
-          boxShadow: '0 4px 12px rgba(107, 79, 58, 0.2)'
+          boxShadow: '0 4px 12px rgba(107, 79, 58, 0.2)',
+          textDecoration: 'none'
         }}>
           Borrow Now <ArrowRight size={14} />
-        </button>
+        </Link>
       </div>
     </motion.div>
   );
@@ -445,9 +445,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
-      {/* ── Section 5: Live Campus Activity Feed ── */}
-      <CampusActivityFeed />
 
       {/* ── Section 6: Founder's Message ── */}
       <section style={{ padding: '120px 0', background: 'white', borderTop: '1px solid var(--border)' }}>

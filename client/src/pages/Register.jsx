@@ -143,7 +143,7 @@ export default function Register() {
                   <div style={{ position: 'relative' }}>
                     <Mail size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input className="input" type="email" name="email" value={form.email} onChange={handleChange}
-                      placeholder="you@college.edu.in" style={{ paddingLeft: 42, background: '#f9fafb' }} required />
+                      placeholder="enter your email" style={{ paddingLeft: 42, background: '#f9fafb' }} required />
                   </div>
                 </motion.div>
 
