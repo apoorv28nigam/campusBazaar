@@ -11,6 +11,10 @@ const tabs = [
 
 export default function MobileNav() {
   const location = useLocation();
+
+  // Hide mobile nav on specific chat windows to give full screen to the chat input
+  if (location.pathname.match(/^\/messages\/.+/)) return null;
+
   return (
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000,

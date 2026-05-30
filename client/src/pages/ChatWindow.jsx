@@ -104,7 +104,7 @@ export default function ChatWindow() {
   if (loading) return <SkeletonChat />;
 
   return (
-    <div style={{ paddingTop: 64, height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
+    <div style={{ paddingTop: 64, height: '100dvh', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
       {/* Header */}
       <div style={{ background: 'white', borderBottom: '1px solid var(--border)', padding: '12px 24px', display: 'flex', alignItems: 'center', gap: 14, flexShrink: 0, boxShadow: '0 2px 10px rgba(0,0,0,0.03)' }}>
         <Link to="/messages" style={{ display: 'flex', alignItems: 'center', color: 'var(--text-muted)', textDecoration: 'none' }}>
