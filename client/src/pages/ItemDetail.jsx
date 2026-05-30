@@ -18,6 +18,7 @@ export default function ItemDetail() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     itemsAPI.getOne(id)
       .then(res => {
         setItem(res.data);

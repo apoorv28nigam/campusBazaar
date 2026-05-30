@@ -19,6 +19,7 @@ export default function BorrowDetail() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     borrowAPI.getOne(id)
       .then(res => setItem(res.data))
       .catch(() => toast.error('Item not found'))
