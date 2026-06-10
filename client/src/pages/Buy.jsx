@@ -30,7 +30,8 @@ export default function Buy() {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  const observerTarget = useRef(null);
+  const observer = useRef();
+
 
   const fetchItems = useCallback(async (p = 1) => {
     setLoading(true);
@@ -54,6 +55,17 @@ export default function Buy() {
     }
   }, [search, category, sort, minPrice, maxPrice]);
 
+  const lastElementRef = useCallback(node => {
+    if (loading) return;
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && page < pages) {
+        fetchItems(page + 1);
+      }
+    }, { threshold: 0.1 });
+    if (node) observer.current.observe(node);
+  }, [loading, page, pages, fetchItems]);
+
   useEffect(() => { fetchItems(1); }, [category, sort]);
 
   useEffect(() => {
@@ -67,19 +79,6 @@ export default function Buy() {
     e.preventDefault();
     fetchItems(1);
   };
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loading && page < pages) {
-          fetchItems(page + 1);
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (observerTarget.current) observer.observe(observerTarget.current);
-    return () => observer.disconnect();
-  }, [loading, page, pages, fetchItems]);
 
   return (
     <div style={{ paddingTop: 100, paddingBottom: 100, minHeight: '100vh', background: 'var(--bg)' }}>
@@ -271,7 +270,7 @@ export default function Buy() {
 
               {/* Infinite scroll target */}
               {page < pages && (
-                <div ref={observerTarget} style={{ textAlign: 'center', marginTop: 56, paddingBottom: 40, color: 'var(--text-muted)' }}>
+                <div ref={lastElementRef} style={{ textAlign: 'center', marginTop: 56, paddingBottom: 40, color: 'var(--text-muted)' }}>
                   {loading && <span>Loading more items...</span>}
                 </div>
               )}
