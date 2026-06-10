@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Upload, X, ArrowLeft, Tag, FileText, DollarSign, Package, Image } from 'lucide-react';
+import { Upload, X, ArrowLeft, Tag, FileText, IndianRupee, Package, Image } from 'lucide-react';
 import { itemsAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import ListingImageAdjuster from '../components/ListingImageAdjuster';
@@ -200,7 +200,7 @@ export default function Sell() {
           <div style={{ background: 'white', padding: 32, borderRadius: 24, border: '1px solid var(--border)', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', gap: 24 }}>
             <h3 style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)', display: 'flex', alignItems: 'center', gap: 10, fontFamily: 'Outfit, sans-serif' }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <DollarSign size={18} color="var(--primary)" />
+                <IndianRupee size={18} color="var(--primary)" />
               </div>
               Set Your Price
             </h3>

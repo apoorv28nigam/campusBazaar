@@ -60,45 +60,24 @@ const PAGE_LOAD = {
 // ── Redesigned Borrow Section Components ─────────────────────────────────────
 const BORROW_ITEMS = [
   {
-    id: 1,
-    title: 'High-End Laptop',
-    price: '₹500/Day',
-    icon: Laptop,
-    iconBg: '#f0fdf4',
-    iconColor: '#16a34a',
-    badge: 'Available Now',
-    featured: true,
-    desc: 'Power for your heavy projects and assignments.'
-  },
-  {
-    id: 3,
-    title: 'Campus Cycle',
+    id: '6a145e0d5e9e4d018cef1055',
+    title: 'boAt Stone 358 Pro',
     price: '₹50/Day',
-    icon: Bike,
+    icon: Laptop,
     iconBg: '#eff6ff',
     iconColor: '#2563eb',
-    badge: 'Available',
-    desc: 'Perfect for quick campus commutes.'
+    badge: 'Available Now',
+    desc: 'Portable wireless speaker from boAt.'
   },
   {
-    id: 4,
-    title: 'Academic Books',
-    price: '₹10/Day',
-    icon: BookOpen,
-    iconBg: '#fdf2f8',
-    iconColor: '#db2777',
-    badge: 'Verified',
-    desc: 'Sem 4 Engineering textbooks.'
-  },
-  {
-    id: 5,
-    title: 'Sports Shoes',
-    price: '₹30/Day',
+    id: '6a14863a6183ba73ab67abc0',
+    title: 'Bata Formal Shoes',
+    price: '₹110/Day',
     icon: ShoppingBag,
     iconBg: '#fff7ed',
     iconColor: '#ea580c',
-    badge: 'Available',
-    desc: 'Size 9, comfortable for football.'
+    badge: 'Available Now',
+    desc: 'Black formal derby-style shoes from Bata.'
   }
 ];
 
