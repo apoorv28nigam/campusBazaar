@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Search, Filter, X, ChevronDown, SlidersHorizontal, Gift, TrendingUp, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,6 +30,7 @@ export default function Buy() {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const observerTarget = useRef(null);
 
   const fetchItems = useCallback(async (p = 1) => {
     setLoading(true);
@@ -66,6 +67,19 @@ export default function Buy() {
     e.preventDefault();
     fetchItems(1);
   };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !loading && page < pages) {
+          fetchItems(page + 1);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (observerTarget.current) observer.observe(observerTarget.current);
+    return () => observer.disconnect();
+  }, [loading, page, pages, fetchItems]);
 
   return (
     <div style={{ paddingTop: 100, paddingBottom: 100, minHeight: '100vh', background: 'var(--bg)' }}>
@@ -255,19 +269,10 @@ export default function Buy() {
                 {items.map(item => <ItemCard key={item._id} item={item} />)}
               </StaggerList>
 
-              {/* Load more */}
+              {/* Infinite scroll target */}
               {page < pages && (
-                <div style={{ textAlign: 'center', marginTop: 56 }}>
-                  <motion.button 
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => fetchItems(page + 1)} 
-                    className="btn-outline" 
-                    disabled={loading} 
-                    style={{ padding: '0 40px', height: 48, fontSize: 15, background: 'white' }}
-                  >
-                    {loading ? 'Processing...' : `Load ${total - items.length} More Items`}
-                  </motion.button>
+                <div ref={observerTarget} style={{ textAlign: 'center', marginTop: 56, paddingBottom: 40, color: 'var(--text-muted)' }}>
+                  {loading && <span>Loading more items...</span>}
                 </div>
               )}
             </motion.div>
