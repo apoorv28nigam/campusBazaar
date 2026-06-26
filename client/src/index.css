@@ -16,12 +16,90 @@
     --header-height: 80px;
     --hero-px-left: 80px;
     --hero-px-right: 40px;
+    /* Scrollbar */
+    --scrollbar-thumb: #d1d5db;
+    --scrollbar-thumb-hover: #9ca3af;
+    /* Skeleton */
+    --skeleton-from: #E8E2DA;
+    --skeleton-via: #f1efe9;
+    /* Chat */
+    --chat-received-bg: #f3f4f6;
+    --chat-received-text: var(--text);
+    /* Input */
+    --input-bg: white;
+    /* Section alt bg */
+    --section-alt: white;
+    /* Navbar */
+    --nav-scrolled-bg: rgba(247, 245, 242, 0.95);
+    --nav-scrolled-border: rgba(107, 79, 58, 0.1);
+    --nav-scrolled-shadow: 0 4px 20px rgba(60, 47, 47, 0.05);
+    --nav-icon-bg: white;
+    --nav-profile-bg: white;
+    --nav-dropdown-bg: white;
+    /* Dropdown hover */
+    --dropdown-hover: #f9fafb;
+    --dropdown-danger-hover: #fef2f2;
+    /* Sell section card */
+    --sell-card-bg: white;
+  }
+
+  /* ── Dark Theme — Premium Near-Black ────────────────────────────────────── */
+  [data-theme="dark"] {
+    /* Brand — original coffee brown for dark surfaces */
+    --primary: #8B6744;
+    --primary-light: rgba(139, 103, 68, 0.12);
+    --primary-dark: #9A7651;
+    /* Status */
+    --success: #4ade80;
+    --danger: #f87171;
+    --warning: #fb923c;
+    /* Near-black backgrounds */
+    --bg-primary: #080808;
+    --bg-secondary: #101010;
+    --bg-card: #141414;
+    --bg: var(--bg-primary);
+    --card: var(--bg-card);
+    --border: #262626;
+    /* Typography */
+    --text: #F5F5F5;
+    --text-muted: #8A8A8A;
+    /* Scrollbar */
+    --scrollbar-thumb: #2A2A2A;
+    --scrollbar-thumb-hover: #404040;
+    /* Skeleton */
+    --skeleton-from: #1A1A1A;
+    --skeleton-via: #262626;
+    /* Chat */
+    --chat-received-bg: #1F1F1F;
+    --chat-received-text: #F5F5F5;
+    /* Input */
+    --input-bg: #111111;
+    /* Section alt bg */
+    --section-alt: #111111;
+    /* Navbar — glass */
+    --nav-scrolled-bg: rgba(8, 8, 8, 0.85);
+    --nav-scrolled-border: #222222;
+    --nav-scrolled-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+    --nav-icon-bg: #141414;
+    --nav-profile-bg: #141414;
+    --nav-dropdown-bg: #141414;
+    /* Dropdown hover */
+    --dropdown-hover: #181818;
+    --dropdown-danger-hover: rgba(248, 113, 113, 0.08);
+    /* Sell section card */
+    --sell-card-bg: #141414;
   }
 
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    /* Global smooth theme transitions */
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
   }
 
   html {
@@ -40,6 +118,10 @@
     width: 100%;
   }
 
+  [data-theme="dark"] body {
+    background: var(--bg-primary);
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
     line-height: 1.2;
@@ -55,8 +137,8 @@
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; border: 2px solid var(--bg); }
-  ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 99px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 }
 
 @layer components {
@@ -68,6 +150,15 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
   }
 
+  [data-theme="dark"] .glass,
+  [data-theme="dark"] .card {
+    background: #141414 !important;
+    border: 1px solid #262626 !important;
+    border-radius: 24px !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35) !important;
+    backdrop-filter: none !important;
+  }
+
   .glass-hover, .card-hover {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -75,6 +166,14 @@
     transform: translateY(-4px);
     box-shadow: 0 20px 25px -5px rgba(107, 79, 58, 0.1), 0 8px 10px -6px rgba(107, 79, 58, 0.05);
     border-color: rgba(107, 79, 58, 0.2);
+  }
+
+  [data-theme="dark"] .glass-hover:hover,
+  [data-theme="dark"] .card-hover:hover {
+    transform: translateY(-2px) !important;
+    background: #181818 !important;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.45) !important;
+    border-color: #262626 !important;
   }
 
   /* Primary Action */
@@ -99,6 +198,10 @@
     transform: translateY(-2px);
     box-shadow: 0 10px 20px rgba(107, 79, 58, 0.2);
   }
+  [data-theme="dark"] .btn-primary:hover {
+    box-shadow: 0 0 25px rgba(139, 103, 68, 0.35);
+    background: var(--primary-dark);
+  }
   .btn-primary:active { transform: translateY(0); }
   .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
@@ -119,6 +222,9 @@
     transition: all 0.2s ease;
     font-family: 'Outfit', sans-serif;
   }
+  [data-theme="dark"] .btn-outline {
+    background: var(--card);
+  }
   .btn-outline:hover {
     background: var(--bg);
     border-color: var(--primary);
@@ -138,7 +244,7 @@
   .input {
     width: 100%;
     padding: 14px 20px;
-    background: white;
+    background: var(--input-bg);
     border: 1px solid var(--border);
     border-radius: 12px;
     color: var(--text);
@@ -218,8 +324,8 @@
     align-self: flex-end;
   }
   .chat-bubble-received {
-    background: #f3f4f6;
-    color: var(--text);
+    background: var(--chat-received-bg);
+    color: var(--chat-received-text);
     border-radius: 12px 12px 12px 2px;
     padding: 10px 14px;
     align-self: flex-start;
@@ -230,10 +336,11 @@
     padding: 8px 16px;
     border-radius: 100px;
     border: 1px solid var(--border);
-    background: white;
+    background: var(--card);
     cursor: pointer;
     transition: all 0.2s;
     font-weight: 500;
+    color: var(--text);
   }
   .category-chip:hover {
     border-color: var(--primary);
@@ -254,10 +361,61 @@
   }
 
   .skeleton {
-    background: linear-gradient(90deg, #E8E2DA 25%, #f1efe9 50%, #E8E2DA 75%);
+    background: linear-gradient(90deg, var(--skeleton-from) 25%, var(--skeleton-via) 50%, var(--skeleton-from) 75%);
     background-size: 200% 100%;
     animation: shimmer 2s infinite linear;
     border-radius: 8px;
+  }
+
+  /* ── Theme Toggle Button ─────────────────────────────────────────────────── */
+  .theme-toggle {
+    position: relative;
+    width: 56px;
+    height: 28px;
+    border-radius: 99px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    outline: none;
+  }
+  .theme-toggle:hover {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(122, 90, 64, 0.15);
+  }
+  .theme-toggle-thumb {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    left: 2px;
+  }
+  [data-theme="dark"] .theme-toggle-thumb {
+    transform: translateX(28px);
+  }
+  .theme-toggle-icons {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+    pointer-events: none;
+    font-size: 10px;
+    line-height: 1;
+    user-select: none;
   }
 }
 
@@ -481,6 +639,10 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.05);
 }
 
+[data-theme="dark"] .checkout-summary-card {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
 @media (max-width: 900px) {
   .checkout-grid {
     grid-template-columns: 1fr;
@@ -608,11 +770,15 @@
 }
 
 .sell-section-card {
-  background: white;
+  background: var(--sell-card-bg);
   padding: 32px;
   border-radius: 24px;
   border: 1px solid var(--border);
   box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+
+[data-theme="dark"] .sell-section-card {
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
 }
 
 @media (max-width: 768px) {
@@ -701,3 +867,131 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+/* ── Dark Mode: Section / footer backgrounds ──── */
+[data-theme="dark"] section[style*="background: white"],
+[data-theme="dark"] section[style*="background:white"] {
+  background: var(--section-alt) !important;
+}
+
+[data-theme="dark"] footer[style*="background: white"],
+[data-theme="dark"] footer[style*="background:white"] {
+  background: var(--section-alt) !important;
+}
+
+/* ── Dark Mode: Inline white divs ── */
+[data-theme="dark"] div[style*="background: white"],
+[data-theme="dark"] div[style*="background:white"] {
+  background: #141414 !important;
+  border-color: #262626 !important;
+}
+
+/* ── Dark Mode: Inline white buttons / selects ── */
+[data-theme="dark"] button[style*="background: white"],
+[data-theme="dark"] button[style*="background:white"],
+[data-theme="dark"] select[style*="background: white"],
+[data-theme="dark"] select[style*="background:white"] {
+  background: #141414 !important;
+  border-color: #262626 !important;
+  color: var(--text) !important;
+}
+
+/* ── Dark Mode: Borrow product cards ─────────── */
+[data-theme="dark"] .borrow-product-card {
+  background: #141414 !important;
+  border: 1px solid #262626 !important;
+  border-radius: 24px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
+}
+[data-theme="dark"] .borrow-product-card:hover {
+  transform: translateY(-2px) !important;
+  background: #181818 !important;
+  border-color: #262626 !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* ── Dark Mode: Native inputs / selects ─────── */
+[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--input-bg);
+  color: var(--text);
+  border-color: var(--border);
+  color-scheme: dark;
+}
+
+/* ── Dark Mode: Primary-light borrow section bg ── */
+[data-theme="dark"] section[style*="background: var(--primary-light)"] {
+  background: linear-gradient(135deg, #080808, #101010) !important;
+}
+
+/* ── Dark Mode: Founder section linear gradient ── */
+[data-theme="dark"] section[style*="background: white"] + section,
+[data-theme="dark"] .founder-section {
+  background: linear-gradient(135deg, #080808, #101010) !important;
+}
+
+/* ── Dark Mode: Toggle premium ───────────────── */
+[data-theme="dark"] .theme-toggle {
+  background: #141414;
+  border-color: #262626;
+}
+[data-theme="dark"] .theme-toggle:hover {
+  border-color: #8B6744;
+  box-shadow: 0 0 0 3px rgba(139, 103, 68, 0.2);
+}
+
+/* ── Dark Mode: Brand glow utility ──────────── */
+[data-theme="dark"] .btn-outline {
+  background: transparent;
+  border-color: #8B6744;
+  color: #F5F5F5;
+}
+[data-theme="dark"] .btn-outline:hover {
+  background: rgba(139, 103, 68, 0.1);
+  border-color: #9A7651;
+}
+
+/* ── Dark Mode: Card elevation system ───────── */
+[data-theme="dark"] .glass,
+[data-theme="dark"] .card {
+  border-radius: 24px !important;
+  border-color: #262626 !important;
+  background: #141414 !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35) !important;
+  backdrop-filter: none !important;
+}
+
+/* ── Dark Mode: Input focus glow ────────────── */
+[data-theme="dark"] .input:focus {
+  border-color: #8B6744;
+  box-shadow: 0 0 0 3px rgba(139, 103, 68, 0.15);
+}
+
+/* ── Dark Mode: Card Contrast Enhancements ── */
+[data-theme="dark"] .card h3,
+[data-theme="dark"] .glass h3,
+[data-theme="dark"] .borrow-product-card h3 {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="dark"] .card p,
+[data-theme="dark"] .glass p,
+[data-theme="dark"] .card .description,
+[data-theme="dark"] .glass .description,
+[data-theme="dark"] .borrow-product-card .description,
+[data-theme="dark"] .card .text-muted,
+[data-theme="dark"] .glass .text-muted,
+[data-theme="dark"] .borrow-product-card .text-muted,
+[data-theme="dark"] .card span[style*="color: var(--text-muted)"],
+[data-theme="dark"] .card div[style*="color: var(--text-muted)"],
+[data-theme="dark"] .card span:has(svg) {
+  color: #B3B3B3 !important;
+}
+
+[data-theme="dark"] .card .price,
+[data-theme="dark"] .glass .price,
+[data-theme="dark"] .borrow-product-card .price {
+  color: #8B6744 !important;
+  font-weight: 700 !important;
+}

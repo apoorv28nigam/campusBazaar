@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import MobileNav from './components/MobileNav';
 import ScrollProgressBar from './components/animations/ScrollProgressBar';
@@ -87,11 +88,13 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <SocketProvider>
-          <AppContent />
-        </SocketProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <SocketProvider>
+            <AppContent />
+          </SocketProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

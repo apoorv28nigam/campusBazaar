@@ -12,6 +12,18 @@
     <title>CampusBazaar — College Marketplace</title>
   </head>
   <body>
+    <!-- Theme init: prevents flash of wrong theme on load -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('cb_theme');
+          var theme = saved === 'dark' || saved === 'light'
+            ? saved
+            : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch(e) {}
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

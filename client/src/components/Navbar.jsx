@@ -7,12 +7,14 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { notificationsAPI } from '../services/api';
 import toast from 'react-hot-toast';
 import { fadeDown, staggerContainer, fadeUp, ease, dur, btnTap } from './animations/motionConfig';
 
 export default function Navbar() {
   const { user, logout, isAuth } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const navigate    = useNavigate();
   const location    = useLocation();
   const [search, setSearch]           = useState('');
@@ -60,15 +62,15 @@ export default function Navbar() {
     { to: '/requests', label: 'Requests', icon: Megaphone   },
   ];
 
-  /* ── Navbar background transitions on scroll ───────────────────────── */
+  /* ── Navbar background transitions on scroll ───────────────────────────── */
   const navStyle = {
     position:       'fixed',
     top:            0, left: 0, right: 0,
     zIndex:         1000,
-    background:     scrolled ? 'rgba(247, 245, 242, 0.95)' : 'transparent',
-    backdropFilter: 'blur(20px)',
-    borderBottom:   `1px solid ${scrolled ? 'rgba(107, 79, 58, 0.1)' : 'transparent'}`,
-    boxShadow:      scrolled ? '0 4px 20px rgba(60, 47, 47, 0.05)' : 'none',
+    background:     scrolled ? 'var(--nav-scrolled-bg)' : 'transparent',
+    backdropFilter: 'blur(12px)',
+    borderBottom:   scrolled ? '1px solid var(--nav-scrolled-border)' : '1px solid transparent',
+    boxShadow:      scrolled ? 'var(--nav-scrolled-shadow)' : 'none',
     transition:     'height 0.3s ease, background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease',
   };
 
@@ -157,28 +159,28 @@ export default function Navbar() {
           </motion.div>
 
           {/* Right section */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
             {isAuth ? (
               <>
                 {/* Messages (Desktop Only) */}
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.92 }} className="desktop-nav">
-                  <Link to="/messages" style={{ width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', color: 'var(--primary)', border: '1px solid var(--border)', transition: 'all 0.2s', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-                    <MessageCircle size={22} />
+                  <Link to="/messages" style={{ width: 40, height: 40, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--nav-icon-bg)', color: 'var(--primary)', border: '1px solid var(--border)', transition: 'all 0.2s', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                    <MessageCircle size={20} />
                   </Link>
                 </motion.div>
 
                 {/* Notifications */}
                 <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.92 }}>
-                  <Link to="/notifications" style={{ position: 'relative', width: 44, height: 44, borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white', color: 'var(--primary)', border: '1px solid var(--border)', transition: 'all 0.2s', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+                  <Link to="/notifications" style={{ position: 'relative', width: 40, height: 40, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--nav-icon-bg)', color: 'var(--primary)', border: '1px solid var(--border)', transition: 'all 0.2s', textDecoration: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
                     <motion.span animate={unread > 0 ? { rotate: [0, -15, 15, -10, 10, 0] } : {}} transition={{ duration: 0.5, repeat: unread > 0 ? Infinity : 0, repeatDelay: 3 }}>
-                      <Bell size={22} />
+                      <Bell size={20} />
                     </motion.span>
                     {unread > 0 && (
                       <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ type: 'spring', stiffness: 500 }}
-                        style={{ position: 'absolute', top: -4, right: -4, width: 20, height: 20, borderRadius: '50%', background: 'var(--warning)', color: 'white', fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 8px rgba(198, 124, 78, 0.4)', border: '2px solid white' }}
+                        style={{ position: 'absolute', top: -4, right: -4, width: 18, height: 18, borderRadius: '50%', background: 'var(--warning)', color: 'white', fontSize: 10, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 8px rgba(198, 124, 78, 0.4)', border: '2px solid var(--nav-icon-bg)' }}
                       >
                         {unread > 9 ? '9+' : unread}
                       </motion.span>
@@ -188,14 +190,14 @@ export default function Navbar() {
                 
                 {/* Profile dropdown (Desktop) */}
                 <div ref={profileRef} style={{ position: 'relative' }} className="desktop-nav">
-                   <motion.button
+                  <motion.button
                     onClick={() => setProfileOpen(p => !p)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px 4px 4px', background: 'white', border: '1px solid var(--border)', borderRadius: 12, cursor: 'pointer', color: 'var(--text)', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 8px 4px 4px', background: 'var(--nav-profile-bg)', border: '1px solid var(--border)', borderRadius: 12, cursor: 'pointer', color: 'var(--text)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}
                   >
-                    <img src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=6B4F3A&color=fff`}
-                      alt="avatar" style={{ width: 32, height: 32, borderRadius: 10, objectFit: 'cover' }} />
+                    <img src={user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=7A5A40&color=fff`}
+                      alt="avatar" style={{ width: 30, height: 30, borderRadius: 9, objectFit: 'cover' }} />
                     <span style={{ fontSize: 13, fontWeight: 700, maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.name?.split(' ')[0]}</span>
                     <motion.span animate={{ rotate: profileOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
                       <ChevronDown size={14} style={{ color: 'var(--text-muted)' }} />
@@ -209,7 +211,7 @@ export default function Navbar() {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: 'white', border: '1px solid var(--border)', borderRadius: 12, padding: 6, minWidth: 190, zIndex: 100, boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)' }}
+                        style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: 'var(--nav-dropdown-bg)', border: '1px solid var(--border)', borderRadius: 12, padding: 6, minWidth: 190, zIndex: 100, boxShadow: isDark ? '0 10px 30px rgba(0,0,0,0.4)' : '0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)' }}
                       >
                         {[
                           { to: '/profile',  icon: User,          label: 'My Profile' },
@@ -217,7 +219,7 @@ export default function Navbar() {
                         ].map(({ to, icon: Icon, label }) => (
                           <Link key={to} to={to} onClick={() => setProfileOpen(false)}
                             style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8, color: 'var(--text)', fontSize: 14, fontWeight: 500, textDecoration: 'none', transition: 'background 0.2s' }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#f9fafb'}
+                            onMouseEnter={e => e.currentTarget.style.background = 'var(--dropdown-hover)'}
                             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                             <Icon size={16} color="var(--primary)" /> {label}
                           </Link>
@@ -225,7 +227,7 @@ export default function Navbar() {
                         <div style={{ height: 1, background: 'var(--border)', margin: '6px 0' }} />
                         <button onClick={() => { setProfileOpen(false); handleLogout(); }}
                           style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8, color: 'var(--danger)', fontSize: 14, fontWeight: 500, background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left', transition: 'background 0.2s', fontFamily: 'inherit' }}
-                          onMouseEnter={e => e.currentTarget.style.background = '#fef2f2'}
+                          onMouseEnter={e => e.currentTarget.style.background = 'var(--dropdown-danger-hover)'}
                           onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                           <LogOut size={16} /> Logout
                         </button>
@@ -244,10 +246,27 @@ export default function Navbar() {
                 </motion.div>
               </div>
             )}
+
+            {/* Theme Toggle */}
+            <motion.button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              whileTap={{ scale: 0.92 }}
+              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              <div className="theme-toggle-thumb">
+                {isDark ? '🌙' : '☀️'}
+              </div>
+              <div className="theme-toggle-icons">
+                <span style={{ opacity: isDark ? 0.4 : 1, transition: 'opacity 0.3s' }}>☀️</span>
+                <span style={{ opacity: isDark ? 1 : 0.4, transition: 'opacity 0.3s' }}>🌙</span>
+              </div>
+            </motion.button>
             
             {/* Hamburger Menu (Mobile Only) */}
             <button className="mobile-only-flex" onClick={() => setDrawerOpen(true)} style={{ background: 'none', border: 'none', color: 'var(--text)', cursor: 'pointer', padding: '8px', alignItems: 'center' }}>
-              <Menu size={28} />
+              <Menu size={26} />
             </button>
           </div>
         </div>
@@ -263,8 +282,9 @@ export default function Navbar() {
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             style={{
               position: 'fixed', top: 0, right: 0, bottom: 0, width: '80%', maxWidth: 320,
-              background: 'white', zIndex: 2000, boxShadow: '-10px 0 30px rgba(0,0,0,0.1)',
+              background: 'var(--card)', zIndex: 2000, boxShadow: isDark ? '-10px 0 40px rgba(0,0,0,0.5)' : '-10px 0 30px rgba(0,0,0,0.1)',
               display: 'flex', flexDirection: 'column', padding: '24px 20px',
+              borderLeft: '1px solid var(--border)',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
@@ -284,7 +304,7 @@ export default function Navbar() {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Search campus..."
-                  style={{ width: '100%', padding: '12px 14px 12px 40px', background: '#f9fafb', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 16, outline: 'none', fontFamily: 'Inter, sans-serif' }}
+                  style={{ width: '100%', padding: '12px 14px 12px 40px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--text)', fontSize: 16, outline: 'none', fontFamily: 'Inter, sans-serif' }}
                 />
               </div>
             </form>
@@ -298,6 +318,28 @@ export default function Navbar() {
               ))}
               
               <div style={{ height: 1, background: 'var(--border)', margin: '16px 0' }} />
+
+              {/* Theme Toggle in Drawer */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderRadius: 12 }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>
+                  {isDark ? '🌙 Dark Mode' : '☀️ Light Mode'}
+                </span>
+                <button
+                  className="theme-toggle"
+                  onClick={toggleTheme}
+                  aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+                >
+                  <div className="theme-toggle-thumb">
+                    {isDark ? '🌙' : '☀️'}
+                  </div>
+                  <div className="theme-toggle-icons">
+                    <span style={{ opacity: isDark ? 0.4 : 1, transition: 'opacity 0.3s' }}>☀️</span>
+                    <span style={{ opacity: isDark ? 1 : 0.4, transition: 'opacity 0.3s' }}>🌙</span>
+                  </div>
+                </button>
+              </div>
+
+              <div style={{ height: 1, background: 'var(--border)', margin: '8px 0' }} />
               
               {isAuth ? (
                 <>

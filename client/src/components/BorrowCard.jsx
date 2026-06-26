@@ -58,7 +58,7 @@ export default function BorrowCard({ item }) {
 
             {/* Pricing */}
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ fontSize: 16, fontWeight: 800, fontFamily: 'Outfit, sans-serif', color: 'var(--text)' }}>
+              <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'Outfit, sans-serif', color: 'var(--primary)' }}>
                 ₹{item.rentPerDay}/day
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--text-muted)' }}>
