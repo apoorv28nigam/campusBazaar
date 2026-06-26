@@ -457,6 +457,14 @@
   background: var(--bg);
 }
 
+/* ── Dark Mode: Mobile bottom tab bar ──────────── */
+[data-theme="dark"] .mobile-nav {
+  background: #0E0E0E !important;
+  border-top: 1px solid #262626 !important;
+  box-shadow: 0 -1px 0 #262626, 0 -10px 30px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: none !important;
+}
+
 /* ── Item Detail Page ──────────────────────────── */
 .item-detail-page {
   padding-top: 100px;
