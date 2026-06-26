@@ -909,14 +909,31 @@
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45) !important;
 }
 
-/* ── Dark Mode: Native inputs / selects ─────── */
+/* ── Dark Mode: Native inputs / selects / textareas / search bars ─────── */
 [data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
 [data-theme="dark"] textarea,
-[data-theme="dark"] select {
-  background-color: var(--input-bg);
-  color: var(--text);
-  border-color: var(--border);
-  color-scheme: dark;
+[data-theme="dark"] select,
+[data-theme="dark"] .input,
+[data-theme="dark"] input[style*="background: white"],
+[data-theme="dark"] input[style*="background:white"],
+[data-theme="dark"] input[style*="background: #f9fafb"],
+[data-theme="dark"] input[style*="background:#f9fafb"],
+[data-theme="dark"] textarea[style*="background: #f9fafb"],
+[data-theme="dark"] textarea[style*="background:#f9fafb"],
+[data-theme="dark"] select[style*="background: #f9fafb"],
+[data-theme="dark"] select[style*="background:#f9fafb"] {
+  background-color: #141414 !important;
+  background: #141414 !important;
+  color: #FFFFFF !important;
+  border-color: #262626 !important;
+  color-scheme: dark !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder,
+[data-theme="dark"] .input::placeholder {
+  color: #8A8A8A !important;
+  opacity: 0.8 !important;
 }
 
 /* ── Dark Mode: Primary-light borrow section bg ── */
