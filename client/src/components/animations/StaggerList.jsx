@@ -9,32 +9,31 @@
  *       </StaggerItem>
  *     ))}
  *   </StaggerList>
+ *
+ * NOTE: We intentionally do NOT use useInView to toggle hidden/visible.
+ * The old approach caused a race condition: if the user scrolled before the
+ * IntersectionObserver fired (it's async), items would stay hidden forever.
+ * Instead, items always animate in on mount — the stagger effect is preserved.
  */
-import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { staggerContainer, scaleIn } from './motionConfig';
 
 /* ── Container ─────────────────────────────────────────────────────────────── */
 export function StaggerList({
   children,
-  stagger       = 0.1,
-  delayChildren = 0.15,
-  threshold     = 0.15,
-  once          = true,
+  stagger       = 0.07,
+  delayChildren = 0.1,
   className,
   style,
   as            = 'div',
 }) {
-  const ref    = useRef(null);
-  const inView = useInView(ref, { amount: threshold, once });
-  const Tag    = motion[as] ?? motion.div;
+  const Tag = motion[as] ?? motion.div;
 
   return (
     <Tag
-      ref={ref}
       variants={staggerContainer(stagger, delayChildren)}
       initial="hidden"
-      animate={inView ? 'visible' : 'hidden'}
+      animate="visible"
       className={className}
       style={style}
     >
