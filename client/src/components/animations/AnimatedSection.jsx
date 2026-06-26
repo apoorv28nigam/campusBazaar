@@ -22,7 +22,7 @@ export default function AnimatedSection({
   variant  = fadeUp,
   threshold = 0.2,
   delay    = 0,
-  once     = false,
+  once     = true,
   className,
   style,
   as       = 'section',

@@ -20,7 +20,7 @@ export function StaggerList({
   stagger       = 0.1,
   delayChildren = 0.15,
   threshold     = 0.15,
-  once          = false,
+  once          = true,
   className,
   style,
   as            = 'div',
